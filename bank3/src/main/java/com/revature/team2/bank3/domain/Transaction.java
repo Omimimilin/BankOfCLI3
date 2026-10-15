@@ -1,6 +1,7 @@
 package com.revature.team2.bank3.domain;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,9 +31,8 @@ public class Transaction {
     @Column(name="transfer_type", length = 20)
     private String transfer_type;
 
-    @Size(max=20)
-    @Column(name="timestamp", length = 20)
-    private String timestamp;
+    @Column(name="timestamp", nullable = false)
+    private Instant timestamp;
     
     // relationship with account (many transactions from one account)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -45,7 +45,7 @@ public class Transaction {
 
     public Transaction() {}
 
-    public Transaction(BigDecimal amount, String transferType, String timestamp, User sourceAccountId, User destinationAccountId) {
+    public Transaction(BigDecimal amount, String transferType, Instant timestamp, User sourceAccountId, User destinationAccountId) {
         this.amount = amount;
         this.transfer_type = transferType;
         this.timestamp = timestamp;
@@ -73,11 +73,11 @@ public class Transaction {
         this.transfer_type = transfer_type;
     }
 
-    public String getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }
 
