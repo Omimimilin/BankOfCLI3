@@ -16,8 +16,8 @@ export class AuthService {
     private readonly http = inject(HttpClient);
     private readonly api = inject(Api);
 
-    register(pin: string) {
-        return this.http.post<RegisterResponse>('${this.api.baseUrl}/auth/register', {pin});
+    register(username: string, name: string, pin: string) {
+        return this.http.post<RegisterResponse>('${this.api.baseUrl}/api/users', {username, name, pin});
     }
 
     login(accountId: string, pin: string) {

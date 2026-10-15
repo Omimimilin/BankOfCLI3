@@ -1,0 +1,10 @@
+<h1>Register</h1>
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <label>Username <input formControlName="username" /></label>
+  <label>Name <input formControlName="name" /></label>
+  <label>PIN <input formControlName="pin" type="password" maxlength="4" /></label>
+  <button type="submit">Register</button>
+  @if (error()) {
+    <p>{{ error() }}</p>
+  }
+</form>

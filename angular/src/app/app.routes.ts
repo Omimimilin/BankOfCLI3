@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideRouter } from '@angular/router';
-export const routes: Routes = [];
+import { Register } from './pages/register/register';
+export const routes: Routes = [
+    { path: '', redirectTo: 'register', pathMatch: 'full' },
+    { path: 'register', component: Register },
+];
 
 
