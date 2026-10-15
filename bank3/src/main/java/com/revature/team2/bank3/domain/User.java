@@ -13,14 +13,17 @@ import jakarta.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity 
 @Table(name="user")
 
+@Schema(description = "A bank account user")
 public class User {
 
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Unique user ID", accessMode = Schema.AccessMode.READ_ONLY)
     private Integer id;
 
     @Size(max=20)
@@ -29,14 +32,17 @@ public class User {
 
     @Size(max=20)
     @Column(name="name", length = 20)
+    @Schema(description = "The user's full name", example = "John Doe")
     private String name;
 
     @Size(max=20)
     @Column(name="pin", length = 20)
+    @Schema(description = "The user's PIN", example = "1234")
     private String pin;
 
     @DecimalMin("0")
     @Column(name="balance", precision = 20, scale = 2)
+    @Schema(description = "Current account balance", example = "1000.00")
     private BigDecimal balance;
 
     // relationship with transaction (one account can have many transactions)

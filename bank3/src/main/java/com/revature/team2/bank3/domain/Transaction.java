@@ -14,33 +14,41 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Size;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @Table(name = "transaction")
+@Schema(description = "A financial transaction between bank accounts")
 public class Transaction {
 
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Unique transaction ID", accessMode = Schema.AccessMode.READ_ONLY, example = "42")
     private Integer id;
 
     @DecimalMin("0")
     @Column(name="amount", precision = 20, scale = 2)
+    @Schema(description = "Transaction amount", example = "25.50", minimum = "0")
     private BigDecimal amount;
 
     @Size(max=20)
     @Column(name="transfer_type", length = 20)
+    @Schema(description = "Type of transfer", example = "deposit", maxLength = 20)
     private String transfer_type;
 
     @Column(name="timestamp", nullable = false)
+    @Schema(description = "Time the transaction occurred", example = "2026-10-15T12:00:00Z")
     private Instant timestamp;
     
     // relationship with account (many transactions from one account)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "source_account", nullable = false)
+    @Schema(hidden = true)
     private User sourceAccount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "destination_account", nullable = true)
+    @Schema(hidden = true)
     private User destinationAccount;
 
     public Transaction() {}
