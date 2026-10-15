@@ -1,6 +1,7 @@
 package com.revature.team2.bank3.domain;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,39 +14,46 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Size;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @Table(name = "transaction")
+@Schema(description = "A financial transaction between bank accounts")
 public class Transaction {
 
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "Unique transaction ID", accessMode = Schema.AccessMode.READ_ONLY, example = "42")
     private Integer id;
 
     @DecimalMin("0")
     @Column(name="amount", precision = 20, scale = 2)
+    @Schema(description = "Transaction amount", example = "25.50", minimum = "0")
     private BigDecimal amount;
 
     @Size(max=20)
     @Column(name="transfer_type", length = 20)
+    @Schema(description = "Type of transfer", example = "deposit", maxLength = 20)
     private String transfer_type;
 
-    @Size(max=20)
-    @Column(name="timestamp", length = 20)
-    private String timestamp;
+    @Column(name="timestamp", nullable = false)
+    @Schema(description = "Time the transaction occurred", example = "2026-10-15T12:00:00Z")
+    private Instant timestamp;
     
     // relationship with account (many transactions from one account)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "source_account", nullable = false)
+    @Schema(hidden = true)
     private User sourceAccount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "destination_account", nullable = true)
+    @Schema(hidden = true)
     private User destinationAccount;
 
     public Transaction() {}
 
-    public Transaction(BigDecimal amount, String transferType, String timestamp, User sourceAccountId, User destinationAccountId) {
+    public Transaction(BigDecimal amount, String transferType, Instant timestamp, User sourceAccountId, User destinationAccountId) {
         this.amount = amount;
         this.transfer_type = transferType;
         this.timestamp = timestamp;
@@ -73,11 +81,11 @@ public class Transaction {
         this.transfer_type = transfer_type;
     }
 
-    public String getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }
 
