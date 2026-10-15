@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.revature.team2.bank3.domain.User;
 
-public interface UserRepository extends JpaRepository<User, String> {
+public interface UserRepository extends JpaRepository<User, Integer> {
     boolean existsByUsername(String username);
-    String getIdByUsername(String username);
+    Integer getIdByUsername(String username);
 }
