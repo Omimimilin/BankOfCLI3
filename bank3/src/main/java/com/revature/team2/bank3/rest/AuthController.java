@@ -16,7 +16,14 @@ import com.revature.team2.bank3.dto.auth.RegisterResponseDto;
 import com.revature.team2.bank3.security.JwtUtil;
 
 import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Authentication", description = "Endpoints for user registration and login")
 @RestController
 @CrossOrigin(origins = "*") // TODO: setup CORS correctly
 @RequestMapping("/api/auth")
@@ -28,6 +35,12 @@ public class AuthController {
         this.jwtUtil = jwtUtil;
     }
 
+    @Operation(summary = "Register a new user", description = "Registers a new user with the provided username, password, and name.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "User registered successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content(schema = @Schema(implementation = ResponseContract.class))),
+            @ApiResponse(responseCode = "409", description = "Username already exists", content = @Content(schema = @Schema(implementation = ResponseContract.class)))
+    })
     @PostMapping("/register")
     public ResponseEntity<ResponseContract<RegisterResponseDto>> register(@Valid @RequestBody RegisterRequestDto dto) {
         // TODO: Register user (check for duplicate usernames too)
@@ -36,6 +49,11 @@ public class AuthController {
         return ResponseContract.success(HttpStatus.CREATED, responseDto);
     }
 
+    @Operation(summary = "Login", description = "Logs in a user with the provided username and password.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User logged in successfully"),
+            @ApiResponse(responseCode = "401", description = "Invalid credentials")
+    })
     @PostMapping("/login")
     public ResponseEntity<ResponseContract<LoginResponseDto>> login(@Valid @RequestBody LoginRequestDto dto) {
         try {
@@ -49,10 +67,5 @@ public class AuthController {
         } catch (Exception e) {
             return ResponseContract.error(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
-    }
-
-    @PostMapping("/protected")
-    public String hello() {
-        return "Protected resource accessed successfully!";
     }
 }

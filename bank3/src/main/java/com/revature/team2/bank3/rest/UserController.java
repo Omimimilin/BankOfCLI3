@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.team2.bank3.dto.user.UserResponseDto;
+import com.revature.team2.bank3.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,9 +21,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Users", description = "Operations for managing users")
 public class UserController {
 
-     // Inject user service here
+     private UserService userService;
 
-     // TODO: Require JWT
+     public UserController(UserService userService) {
+          this.userService = userService;
+     }
+
      @GetMapping()
      @Operation(summary = "Get account details", description = "Get the full account details of a user. The request must have a JWT attached")
      public ResponseEntity<ResponseContract<UserResponseDto>> me() {
