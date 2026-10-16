@@ -1,49 +1,41 @@
 package com.revature.team2.bank3.rest;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import jakarta.validation.Valid;
+import com.revature.team2.bank3.dto.user.UserResponseDto;
 
-class User {
-     private int id;
-
-     public int getId() {
-          return id;
-     }
-}
-
-class UserWriteDto {
-}
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/users")
+@Tag(name = "Users", description = "Operations for managing users")
 public class UserController {
 
-     // Add User Service Here
+     // Inject user service here
 
-     @GetMapping("/{id}")
-     public User getUser(@PathVariable int id) {
-          return new User();
+     // TODO: Require JWT
+     @GetMapping()
+     @Operation(summary = "Get account details", description = "Get the full account details of a user. The request must have a JWT attached")
+     public ResponseEntity<BankApiResponse<UserResponseDto>> me() {
+          // TODO: implement user service to find user
+
+          UserResponseDto user = new UserResponseDto(null, null, null, null);
+          return BankApiResponse.success(HttpStatus.OK, user);
      }
 
-     @PostMapping
-     public ResponseEntity<User> createUser(@Valid @RequestBody UserWriteDto dto) {
-          User user = new User();
-          return ResponseEntity
-                    .created(
-                              ServletUriComponentsBuilder
-                                        .fromCurrentRequest()
-                                        .path("/{id}")
-                                        .buildAndExpand(user.getId())
-                                        .toUri())
-                    .body(user);
-     }
+     @GetMapping("/{username}")
+     @Operation(summary = "Get a user's ID by their username", description = "Returns the user ID the user with the supplied username")
+     public ResponseEntity<BankApiResponse<Integer>> getIdByUsername(
+               @Parameter(description = "Username of the user", example = "1") @PathVariable String username) {
+          // TODO: implement user service to find user by username
 
+          return BankApiResponse.success(HttpStatus.OK, null);
+     }
 }
