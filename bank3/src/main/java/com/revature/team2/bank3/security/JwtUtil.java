@@ -1,44 +1,46 @@
 package com.revature.team2.bank3.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
+import java.util.Date;
+
+import javax.crypto.SecretKey;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import com.revature.team2.bank3.domain.User;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Component;
-import javax.crypto.SecretKey;
-import java.util.Date;
 
 @Component
 public class JwtUtil {
-    private final String SECRET = "mysecretkeymysecretkeymysecretkeymysecretkey"; // >= 256 bits
+    @Value("${app.jwt.secret}")
+    private String SECRET;
     private final SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
-    public String generateToken(String username) {
+    public String generateToken(User user) {
         return Jwts.builder()
-                .subject(username) // TODO: Set as ID
-                .claim("username", username)
+                .claim("accountId", user.getId())
+                .claim("username", user.getUsername())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 86400000)) // 1 day
                 .signWith(key)
                 .compact();
     }
 
-    public String extractUsername(String token) {
+    public String extractId(String token) {
         return Jwts.parser().verifyWith(key).build()
                 .parseSignedClaims(token).getPayload().getSubject();
     }
 
-    // public String extractUsername(String token) {
-    // Jws<Claims> claimsJws =
-    // Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token);
-    // return claimsJws.getBody().get("username", String.class);
-    // }
-
-    // public String extractRole(String token) {
-    // Jws<Claims> claimsJws =
-    // Jwts.parserBuilder().setSigningKey(SECRET_KEY).build().parseClaimsJws(token);
-    // return claimsJws.getBody().get("role", String.class);
-    // }
+    public String extractUsername(String token) {
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("username", String.class);
+    }
 
     public boolean validateToken(String token) {
         try {

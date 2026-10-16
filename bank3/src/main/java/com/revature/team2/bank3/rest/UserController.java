@@ -4,11 +4,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.revature.team2.bank3.domain.User;
 import com.revature.team2.bank3.dto.user.UserResponseDto;
+import com.revature.team2.bank3.exceptions.UserNotFoundException;
+import com.revature.team2.bank3.security.JwtUtil;
 import com.revature.team2.bank3.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,26 +26,43 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class UserController {
 
      private UserService userService;
+     private JwtUtil jwtUtil;
 
-     public UserController(UserService userService) {
+     public UserController(UserService userService, JwtUtil jwtUtil) {
           this.userService = userService;
+          this.jwtUtil = jwtUtil;
      }
 
-     @GetMapping()
-     @Operation(summary = "Get account details", description = "Get the full account details of a user. The request must have a JWT attached")
-     public ResponseEntity<ResponseContract<UserResponseDto>> me() {
-          // TODO: implement user service to find user
-
-          UserResponseDto user = new UserResponseDto(null, null, null, null);
-          return ResponseContract.success(HttpStatus.OK, user);
+     @GetMapping("/me")
+     @Operation(summary = "Get your account details", description = "Get the full account details of the user with the attached JWT in the Authorization header")
+     public ResponseEntity<ResponseContract<UserResponseDto>> me(
+               @RequestHeader(value = "Authorization", required = true) String authorization) {
+          String jwt = authorization.split(" ")[1];
+          String username = this.jwtUtil.extractUsername(jwt);
+          User user = userService.getUserByUsername(username);
+          UserResponseDto responseDto = new UserResponseDto(
+                    user.getId(),
+                    user.getUsername(),
+                    user.getName(),
+                    user.getBalance());
+          return ResponseContract.success(HttpStatus.OK, responseDto);
      }
 
-     @GetMapping("/{username}")
-     @Operation(summary = "Get a user's ID by their username", description = "Returns the user ID the user with the supplied username")
-     public ResponseEntity<ResponseContract<Integer>> getIdByUsername(
-               @Parameter(description = "Username of the user", example = "1") @PathVariable String username) {
-          // TODO: implement user service to find user by username
-
-          return ResponseContract.success(HttpStatus.OK, null);
+     @GetMapping("")
+     @Operation(summary = "Get details of another user by their username", description = "Get details of another user by their username")
+     public ResponseEntity<ResponseContract<UserResponseDto>> doesUserExist(
+               @Parameter(description = "Username of the user", example = "superman") @RequestParam String username) {
+          try {
+               User user = userService.getUserByUsername(username);
+               UserResponseDto responseDto = new UserResponseDto(
+                         user.getId(),
+                         user.getUsername(),
+                         user.getName(),
+                         user.getBalance());
+               return ResponseContract.success(HttpStatus.OK, responseDto);
+          } catch (UserNotFoundException e) {
+               return ResponseContract.error(HttpStatus.NOT_FOUND,
+                         String.format("Username `%s` doesn't exist.", username));
+          }
      }
 }
