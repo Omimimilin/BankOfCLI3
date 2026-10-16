@@ -1,0 +1,124 @@
+<div class="dashboard">
+  <!-- Top section -->
+  <div class="top-section">
+    <!-- Welcome -->
+    <app-card class="welcome-card" [loading]="isLoading()">
+      <span class="date-badge">
+        {{ currentDate | date: 'EEE, MMM d' }}
+      </span>
+      <div class="welcome-row">
+        <div class="welcome-copy">
+          <h1>Welcome back, {{ account()?.accountName | titlecase }}.</h1>
+          <p>Stay on top of your account activity and transactions.</p>
+        </div>
+        <app-button
+          class="new-transaction-button no-skeleton"
+          type="button"
+          [cdkMenuTriggerFor]="transactionMenu"
+          [cdkMenuPosition]="menuPositions"
+        >
+          <div class="flex justify-center items-center gap-3">
+            <span>New Transaction</span>
+            <ng-icon name="matAddCircleRound" size="20" class="pointer-events-none" />
+          </div>
+        </app-button>
+        <ng-template #transactionMenu>
+          <div cdkMenu class="transaction-menu">
+            <button cdkMenuItem (click)="processTransaction(types.Deposit)">Deposit</button>
+            <button cdkMenuItem (click)="processTransaction(types.Withdraw)">Withdraw</button>
+            <button cdkMenuItem (click)="processTransaction(types.TransferOut)">Transfer</button>
+          </div>
+        </ng-template>
+      </div>
+    </app-card>
+
+    <!-- Total Balance -->
+    <app-card class="balance-card" [loading]="isLoading()">
+      <p class="balance-label no-skeleton">Total Balance</p>
+      <h2>${{ account()?.balance?.toFixed(2) }}</h2>
+      <mat-card class="bank-card">
+        <div class="card-top">
+          <span class="no-skeleton">BANK OF CLI</span>
+          <span>VISA</span>
+        </div>
+        <div class="card-chip"></div>
+        <div class="card-number">
+          <pre>{{ cardNumber }}</pre>
+        </div>
+        <div class="card-bottom">
+          <div>
+            <span class="card-label no-skeleton">CARD HOLDER</span>
+            <pre>{{ account()?.accountName | titlecase }}</pre>
+          </div>
+          <div>
+            <span class="card-label no-skeleton">EXPIRES</span>
+            <pre>{{ expirationDate }}</pre>
+          </div>
+        </div>
+      </mat-card>
+    </app-card>
+  </div>
+
+  <!-- Analytics -->
+  <div class="analytics-section">
+    <!-- This Month -->
+    <app-card class="monthly-summary" [loading]="isLoading()">
+      <h2 class="summary-title no-skeleton">This Month</h2>
+      <div class="income-spending-card">
+        <!-- Income -->
+        <app-card class="stat-card">
+          <div class="stat-header">
+            <p class="no-skeleton">Income</p>
+            <div class="stat-icon">
+              <ng-icon name="matSavingsFillOutline"></ng-icon>
+            </div>
+          </div>
+          <div class="stat-bottom">
+            <h2>${{ monthSummary().income }}</h2>
+            <span
+              class="change"
+              [class.positive]="monthSummary().incomeDirection === 'up'"
+              [class.negative]="monthSummary().incomeDirection === 'down'"
+            >
+              {{ monthSummary().incomeChange }}
+            </span>
+          </div>
+        </app-card>
+        <!-- Spending -->
+        <app-card class="stat-card">
+          <div class="stat-header">
+            <p class="no-skeleton">Spending</p>
+            <div class="stat-icon">
+              <ng-icon name="matMoneyBagFillOutline"></ng-icon>
+            </div>
+          </div>
+          <div class="stat-bottom">
+            <h2>${{ monthSummary().spending }}</h2>
+            <span
+              class="change"
+              [class.positive]="monthSummary().spendingDirection === 'up'"
+              [class.negative]="monthSummary().spendingDirection === 'down'"
+            >
+              {{ monthSummary().spendingChange }}
+            </span>
+          </div>
+        </app-card>
+      </div>
+    </app-card>
+
+    <!-- Balance History -->
+    <app-card class="balance-history-card no-skeleton">
+      <h2 class="balance-text">Balance History</h2>
+      <div class="chart">
+        <canvas id="balanceChart"></canvas>
+      </div>
+    </app-card>
+  </div>
+
+  <!-- Transaction history -->
+  <div class="transaction-history-section">
+    <app-card class="transactions-card no-skeleton" [loading]="isLoading()">
+      <app-transaction-table [loading]="isLoading()"></app-transaction-table>
+    </app-card>
+  </div>
+</div>

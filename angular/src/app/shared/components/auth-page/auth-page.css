@@ -1,0 +1,133 @@
+.wrapper {
+  min-height: 100dvh;
+  background: rgb(248, 248, 248);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 var(--space-5xl);
+}
+
+.card {
+  display: grid;
+  min-height: 40rem;
+  grid-template-columns: 10fr 20fr;
+  border-radius: 2rem;
+  background: white;
+  max-width: 70rem;
+  margin: 0 auto;
+  box-shadow: 0 0 2.5rem 1rem var(--primary-white-90);
+  padding: 1rem;
+
+  > div {
+    border-radius: 1rem;
+    position: relative;
+  }
+}
+
+.left {
+  filter: hue-rotate(calc(var(--hue-rotate) * 1deg));
+  border-radius: 1rem;
+  background: url('/assets/auth/mesh-desktop.png');
+  background-position: center;
+  background-size: cover;
+  padding: var(--space-m);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  h2 {
+    font-size: var(--step-2);
+    font-weight: 400;
+    color: white;
+    margin-bottom: var(--space-xs);
+  }
+
+  h3 {
+    font-size: var(--step-5);
+    font-weight: 550;
+    line-height: 1.4em;
+    color: white;
+    padding-right: var(--space-l);
+    text-wrap: pretty;
+  }
+}
+
+.right {
+  max-width: 35rem;
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--space-2xl);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media screen and (max-width: 1440px) {
+  .card {
+    grid-template-columns: 11fr 20fr;
+  }
+}
+
+@media screen and (max-width: 1280px) {
+  .card {
+    grid-template-columns: 12fr 20fr;
+  }
+  .wrapper {
+    padding: 0 var(--space-4xl);
+  }
+}
+
+@media screen and (max-width: 1080px) {
+  .wrapper {
+    padding: 0;
+  }
+
+  .tablet-background {
+    width: 100dvw;
+    height: 100dvh;
+    filter: hue-rotate(calc(var(--hue-rotate) * 1deg));
+    background: url('/assets/auth/mesh-tablet.png');
+    background-size: cover;
+    background-position: center;
+    position: absolute;
+  }
+
+  .card {
+    min-height: auto;
+    max-width: 35rem;
+    grid-template-columns: auto;
+    box-shadow: none;
+    border-radius: 1rem;
+    padding: 0;
+    z-index: 1;
+  }
+
+  .left {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .wrapper {
+    background: white;
+  }
+
+  .tablet-background {
+    background: none;
+  }
+
+  .right {
+    padding: 0 var(--space-l);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .right {
+    padding: 0 var(--space-m);
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .right {
+    padding: 0 var(--space-s);
+  }
+}

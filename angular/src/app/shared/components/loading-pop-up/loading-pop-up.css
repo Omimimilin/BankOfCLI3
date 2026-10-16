@@ -1,0 +1,26 @@
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 96px;
+  aspect-ratio: 1;
+  display: grid;
+  animation: l14 4s infinite;
+}
+.loader::before,
+.loader::after {
+  content: '';
+  grid-area: 1/1;
+  border: 10px solid;
+  border-radius: 50%;
+  border-color: var(--primary) var(--primary) #0000 #0000;
+  mix-blend-mode: darken;
+  animation: l14 1s infinite linear;
+}
+.loader::after {
+  border-color: #0000 #0000 var(--primary-white-50) var(--primary-white-50);
+  animation-direction: reverse;
+}
+@keyframes l14 {
+  100% {
+    transform: rotate(1turn);
+  }
+}

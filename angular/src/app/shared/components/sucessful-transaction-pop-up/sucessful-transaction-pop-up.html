@@ -1,0 +1,54 @@
+<div class="flex flex-col items-center gap-(--space-s) px-6 pt-6 pb-2 bg-[#F8F8F8]">
+  <span
+    class="flex size-16 items-center justify-center rounded-full border-2 font-bold text-(length:--step-5) {{
+      approved
+        ? 'border-green-500 bg-green-100 text-green-700'
+        : 'border-yellow-500 bg-yellow-100 text-yellow-700'
+    }}"
+    aria-hidden="true"
+    >{{ approved ? '✓' : '…' }}</span
+  >
+  <h1 class="m-0 text-center font-bold text-gray-900 text-(length:--step-6)">
+    Payment {{ approved ? 'Successful' : 'Pending' }}
+  </h1>
+</div>
+
+<mat-dialog-content class="bg-[#F8F8F8]">
+  <div class="flex flex-col gap-(--space-m)">
+    <app-card class="flex flex-col items-center shadow-none">
+      <span class="text-gray-700 text-(length:--step-0) pb-2">Amount</span>
+      <span class="max-w-full font-bold text-black text-(length:--step-10)">
+        {{ usd.format(data.amount) }}
+      </span>
+    </app-card>
+
+    <div class="grid grid-cols-1 gap-(--space-s) sm:grid-cols-2">
+      <app-card class="flex flex-col gap-(--space-3xs) shadow-none">
+        <dt
+          class="font-semibold tracking-wide uppercase text-(--primary-dark-30) text-(length:--step--1)"
+        >
+          Transaction type
+        </dt>
+        <div class="font-semibold text-black text-(length:--step-2)">
+          {{ title }}
+        </div>
+      </app-card>
+      <app-card class="flex flex-col gap-(--space-3xs) shadow-none">
+        <dt
+          class="font-semibold tracking-wide uppercase text-(--primary-dark-30) text-(length:--step--1)"
+        >
+          Destination
+        </dt>
+        <div class="font-semibold break-all text-black text-(length:--step-2)">
+          {{ data.recipientAccountId }}
+        </div>
+      </app-card>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="px-6! pb-6! mb-4 bg-[#F8F8F8]">
+  <div class="button-container w-full">
+    <button mat-dialog-close>Done</button>
+  </div>
+</mat-dialog-actions>

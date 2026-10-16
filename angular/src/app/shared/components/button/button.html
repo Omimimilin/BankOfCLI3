@@ -1,0 +1,12 @@
+<div class="button-container">
+  <button
+    [class.transparent]="loading()"
+    [type]="type()"
+    [disabled]="disabled() || loading()"
+    (click)="clicked.emit()"
+    [class]="classes()"
+  >
+    <ng-content />
+  </button>
+  <div [hidden]="!loading()" class="loader"></div>
+</div>

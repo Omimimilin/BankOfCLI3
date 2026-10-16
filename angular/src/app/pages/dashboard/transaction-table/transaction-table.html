@@ -1,0 +1,117 @@
+<div class="transaction-table-container">
+  <div id="transaction-table-title">
+    <h1 class="text-2xl font-semibold">Recent Transactions</h1>
+    <app-button
+      class="new-transaction-button"
+      type="button"
+      [disabled]="false"
+      [cdkMenuTriggerFor]="transactionMenu"
+      [cdkMenuPosition]="menuPositions"
+    >
+      <div class="flex justify-center items-center gap-3">
+        <span>New Transaction</span>
+        <ng-icon name="matAddCircleRound" size="20" class="pointer-events-none" />
+      </div>
+    </app-button>
+    <ng-template #transactionMenu>
+      <div cdkMenu class="transaction-menu">
+        <button cdkMenuItem (click)="processTransaction(types.Deposit)">Deposit</button>
+        <button cdkMenuItem (click)="processTransaction(types.Withdraw)">Withdraw</button>
+        <button cdkMenuItem (click)="processTransaction(types.TransferOut)">Transfer</button>
+      </div>
+    </ng-template>
+  </div>
+
+  <form id="transaction-table-form">
+    <app-input
+      inputId="search-transactions"
+      name="search-transactions"
+      type="search"
+      class="w-full"
+      placeholder="Find Transactions..."
+      [(value)]="searchString"
+      (valueChange)="applyFiltersAndSort()"
+    />
+    <app-dropdown
+      class="w-full md:w-full min-h-full"
+      [options]="['Deposit', 'Withdraw', 'Transfer']"
+      placeHolder="All Categories"
+      [(value)]="selectedCategory"
+      (valueChange)="applyFiltersAndSort()"
+    />
+    <app-dropdown
+      class="w-full md:w-full min-h-full"
+      [options]="['Date', 'Category', 'Destination', 'Status', 'Amount']"
+      placeHolder="Order By"
+      [(value)]="orderBy"
+      (valueChange)="applyFiltersAndSort()"
+    />
+    <app-dropdown
+      class="w-full md:w-full min-h-full"
+      [options]="['Ascending', 'Descending']"
+      placeHolder="Sort Order"
+      [disabled]="orderBy === ''"
+      [(value)]="sortDirection"
+      (valueChange)="applyFiltersAndSort()"
+    />
+  </form>
+
+  <table id="transaction-table">
+    <thead>
+      <tr id="transaction-table-header">
+        <th>Date/Time</th>
+        <th>Category</th>
+        <th>Destination</th>
+        <th>Status</th>
+        <th>Amount</th>
+      </tr>
+    </thead>
+
+    <tbody id="transaction-table-body">
+      @if (dataLoading()) {
+        @for (_ of loadingRows; track $index) {
+          <tr app-loading-row></tr>
+        }
+      } @else {
+        @for (transaction of tableData(); track transaction.id) {
+          <tr>
+            <td data-label="Date/Time">{{ transaction.date }}</td>
+            <td data-label="Category">{{ transaction.category }}</td>
+            <td data-label="Destination">{{ transaction.destination }}</td>
+            <td data-label="Status">
+              <app-label [status]="transaction.status" />
+            </td>
+            <td data-label="Amount">${{ transaction.amount.toFixed(2) }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5" class="empty-cell">No data available.</td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+
+  <div id="pagination">
+    <span> Page {{ currentPage }} of {{ totalPages }} </span>
+    <div id="pagination-buttons">
+      <button
+        id="prev-button"
+        class="clickable"
+        (click)="previousPage()"
+        [disabled]="currentPage === 1"
+      >
+        <ng-icon name="matChevronLeftFillOutline"></ng-icon>
+      </button>
+
+      <button
+        id="next-button"
+        class="clickable"
+        (click)="nextPage()"
+        [disabled]="currentPage === totalPages"
+      >
+        <ng-icon name="matChevronRightFillOutline"></ng-icon>
+      </button>
+    </div>
+  </div>
+</div>

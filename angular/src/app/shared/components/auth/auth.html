@@ -1,0 +1,35 @@
+<div class="wrapper">
+  <app-toast></app-toast>
+  <h1>{{ heading() }}</h1>
+  <p>{{ description() }}</p>
+  <form
+    (input)="isFormValid.set($any($event.currentTarget).checkValidity())"
+    (submit)="submit($event)"
+  >
+    @for (field of fields(); track field.name) {
+      <div class="input-group">
+        <label [for]="field.name">{{ field.label }}</label>
+        <app-input
+          [type]="field.type"
+          [inputId]="field.name"
+          [name]="field.name"
+          [placeholder]="field.placeholder"
+          [disabled]="isLoading()"
+        ></app-input>
+      </div>
+    }
+    <p [hidden]="!errorText()" class="error">{{ errorText() }}</p>
+    <app-button
+      class="margin-top"
+      type="submit"
+      [disabled]="isLoading() || !isFormValid()"
+      [loading]="isLoading()"
+      >{{ buttonText() }}</app-button
+    >
+  </form>
+  <div class="divider"></div>
+  <p class="description bottom">
+    {{ footerText() }}
+    <a class="link" routerLink="{{ footerActionLink() }}">{{ footerActionText() }}</a>
+  </p>
+</div>
