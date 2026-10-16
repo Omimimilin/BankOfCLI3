@@ -16,7 +16,6 @@ import io.jsonwebtoken.security.Keys;
 public class JwtUtil {
     private final SecretKey key;
 
-    // Spring will automatically inject the property into the constructor parameter
     public JwtUtil(@Value("${app.jwt.secret}") String secret) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
