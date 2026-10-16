@@ -1,0 +1,69 @@
+<nav class="navbar">
+  <a class="left" routerLink="/dashboard">
+    <div class="logo-container">
+      <app-logo fill="white" [size]="25"></app-logo>
+    </div>
+    <p>Bank of CLI</p>
+  </a>
+  <ul class="nav-bar">
+    <!-- Dashboard -->
+    <li>
+      <a
+        class="nav-pill"
+        routerLink="/dashboard"
+        routerLinkActive="nav-pill-active"
+        (click)="closeMenu()"
+      >
+        Dashboard
+      </a>
+    </li>
+
+    <!-- Transaction (dropdown) -->
+    <li
+      class="dropdown"
+      routerLinkActive
+      #txActive="routerLinkActive"
+      (pointerenter)="onPointerEnter($event)"
+      (pointerleave)="onPointerLeave($event)"
+      (focusout)="onFocusOut($event)"
+    >
+      <button
+        type="button"
+        class="nav-pill dropdown-toggle"
+        [class.nav-pill-active]="txActive.isActive || menuOpen()"
+        aria-haspopup="true"
+        aria-controls="transaction-menu"
+        [attr.aria-expanded]="menuOpen()"
+        (click)="toggleMenu()"
+      >
+        Transaction
+      </button>
+
+      <ul id="transaction-menu" class="dropdown-menu" [class.dropdown-menu-open]="menuOpen()">
+        @for (item of transactionLinks; track item.type) {
+          <li>
+            <button type="button" class="dropdown-link" (click)="transact(item.type)">
+              {{ item.label }}
+            </button>
+          </li>
+        }
+      </ul>
+    </li>
+  </ul>
+  <div class="right">
+    <button
+      type="button"
+      [attr.aria-label]="theme.theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+      (click)="theme.toggle()"
+    >
+      <ng-icon
+        [name]="theme.theme() === 'dark' ? 'lucideSun' : 'lucideMoon'"
+        size="15"
+        class="text-gray-500 pointer-events-none"
+      />
+    </button>
+    <button type="button" aria-label="Sign out" (click)="logout()">
+      <ng-icon name="lucideLogOut" size="15" class="text-gray-500 pointer-events-none" />
+    </button>
+  </div>
+</nav>

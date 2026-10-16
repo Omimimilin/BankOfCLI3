@@ -1,19 +1,39 @@
 import { Routes } from '@angular/router';
-import { Register } from './pages/register/register';
-import { Login } from './pages/login/login';
-import { authGuard } from './core/auth.guard';
 import { Dashboard } from './pages/dashboard/dashboard';
-import { TransactionPage } from './pages/transaction/transaction';
-import { History } from './pages/history/history';
+import { Docs } from './pages/docs/docs';
+import { LoginPage } from './pages/login-page/login-page';
+import { NotFound } from './pages/not-found/not-found';
+import { RegisterPage } from './pages/register-page/register-page';
+import { TransactionPage } from './pages/transaction-page/transaction-page';
+import { authGuard } from './service/auth/auth.guard';
+
 export const routes: Routes = [
-    { path: '', redirectTo: 'register', pathMatch: 'full' },
-    { path: 'login', component: Login },
-    { path: 'register', component: Register },
-    { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
-    { path: 'deposit', component: TransactionPage, canActivate: [authGuard], data: {kind: 'deposit'} },
-    { path: 'withdraw', component: TransactionPage, canActivate: [authGuard], data: {kind: 'withdraw'} },
-    { path: 'transfer', component: TransactionPage, canActivate: [authGuard], data: {kind: 'transfer'} },
-    { path: 'history', component: History, canActivate: [authGuard]},
+  {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full',
+  },
+  {
+    path: 'login',
+    component: LoginPage,
+    canActivate: [authGuard({ reverse: true })],
+  },
+  {
+    path: 'register',
+    component: RegisterPage,
+    canActivate: [authGuard({ reverse: true })],
+  },
+  {
+    path: 'dashboard',
+    component: Dashboard,
+    canActivate: [authGuard({ reverse: false })],
+  },
+  {
+    path: 'transactions/:kind',
+    component: TransactionPage,
+    canActivate: [authGuard({ reverse: false })],
+  },
+  { path: 'docs', component: Docs },
+  { path: 'not-found', component: NotFound },
+  { path: '**', redirectTo: 'not-found' }, // must stay last
 ];
-
-
