@@ -1,24 +1,24 @@
 package com.revature.team2.bank3.domain;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.DecimalMin;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.validation.constraints.Size;
 
 @Entity 
-@Table(name="user")
+@Table(name="users")
 
 public class User {
 
     @Id 
-    private String id;
+    private Integer id;
 
     @Size(max=20)
     @Column(name="name", length = 20)
@@ -36,7 +36,7 @@ public class User {
     @OneToMany(mappedBy = "sourceAccount")
     private List<Transaction> transactions = new ArrayList<>();
 
-    public User(String id, String name, String pin, BigDecimal balance) {
+    public User(Integer id, String name, String pin, BigDecimal balance) {
         this.id = id;
         this.name = name;
         this.pin = pin;
@@ -46,11 +46,11 @@ public class User {
     // required for hibernate
     public User() {}
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
