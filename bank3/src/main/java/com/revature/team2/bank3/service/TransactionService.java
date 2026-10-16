@@ -1,9 +1,10 @@
 package com.revature.team2.bank3.service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.revature.team2.bank3.domain.Transaction;
@@ -11,7 +12,7 @@ import com.revature.team2.bank3.domain.User;
 import com.revature.team2.bank3.exceptions.InsufficientFundsException;
 import com.revature.team2.bank3.exceptions.InvalidAmountException;
 import com.revature.team2.bank3.exceptions.SelfTransferNotAllowedException;
-import com.revature.team2.bank3.persistence.TransactionRepository;
+import com.revature.team2.bank3.repository.TransactionRepository;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,15 +27,15 @@ public class TransactionService {
     }
 
     @Transactional
-    public void deposit(long id, BigDecimal amount) {
+    public void deposit(int id, BigDecimal amount) {
         User user = userService.getAccount(id);
         increaseBalance(user, amount);
         Transaction tx = new Transaction(
-                user,
-                "DEPOSIT",
                 amount,
-                "",
-                LocalDate.now());
+                "deposit",
+                Instant.now(),
+                user,
+                null);
         transactionRepo.save(tx);
     }
 
@@ -50,16 +51,16 @@ public class TransactionService {
     }
 
     @Transactional
-    public void withdraw(long id, BigDecimal amount) {
+    public void withdraw(int id, BigDecimal amount) {
 
         User user = userService.getAccount(id);
         decreaseBalance(user, amount);
         Transaction tx = new Transaction(
+                amount,
+                "withdraw",
+                Instant.now(),
                 user,
-                "WITHDRAW",
-                amount.negate(),
-                "",
-                LocalDate.now());
+                null);
         transactionRepo.save(tx);
     }
 
@@ -78,7 +79,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public void transfer(long fromId, long toId, BigDecimal amount) {
+    public void transfer(int fromId, int toId, BigDecimal amount) {
         if (fromId == toId) {
             throw new SelfTransferNotAllowedException("Transferring to the same account is an invalid operation");
         }
@@ -87,25 +88,27 @@ public class TransactionService {
         decreaseBalance(fromUser, amount);
         increaseBalance(toUser, amount);
         Transaction fromTX = new Transaction(
-                fromUser,
-                "TRANSFER_OUT",
-                amount.negate(),
-                toUser.getUsername(),
-                LocalDate.now());
-        Transaction toTX = new Transaction(
-                toUser,
-                "TRANSFER_IN",
                 amount,
-                fromUser.getUsername(),
-                LocalDate.now());
+                "transfer_out",
+                Instant.now(),
+                fromUser,
+                toUser);
+        Transaction toTX = new Transaction(
+                amount,
+                "transfer_in",
+                Instant.now(),
+                toUser,
+                fromUser);
+
         transactionRepo.save(fromTX);
         transactionRepo.save(toTX);
     }
 
     @Transactional(readOnly = true)
-    public List<Transaction> getHistory(long id) {
+    public List<Transaction> getHistory(int id) {
         User user = userService.getAccount(id);
-        List<Transaction> history = transactionRepo.findByUserOrderByCreatedAtDesc(user);
+        List<Transaction> history = transactionRepo.findBySourceAccount_IdOrDestinationAccount_Id(user.getId(), null,
+                Sort.by("timestamp"));
         return history;
     }
 

@@ -8,7 +8,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.revature.team2.bank3.domain.Transaction;
 import com.revature.team2.bank3.domain.User;
 import com.revature.team2.bank3.exceptions.InsufficientFundsException;
-import com.revature.team2.bank3.persistence.TransactionRepository;
+import com.revature.team2.bank3.repository.TransactionRepository;
 
 @ExtendWith(MockitoExtension.class) // JUnit 5 hook: lets Mockito create @Mock objects before each test
 class TransactionServiceTest {
@@ -34,13 +33,13 @@ class TransactionServiceTest {
 
     @Test // marks a method JUnit should run
     void withdrawMoreThanBalanceThrowsAndChangesNothing() {
-        User user = new User("alice", new BigDecimal("50"), new Date(0)); // arrange: real object with 50
-        when(userService.getAccount(1L)).thenReturn(user); // stub: "when asked for user 1, return alice"
+        User user = new User(1, "alice", "Alice", "1234", new BigDecimal("50")); // arrange:
+        when(userService.getAccount(1)).thenReturn(user); // stub: "when asked for
         System.out.print(user.getBalance());
-        assertThrows(InsufficientFundsException.class, // act + assert: the lambda must throw this type
-                () -> service.withdraw(1L, new BigDecimal("75")));
+        assertThrows(InsufficientFundsException.class, // act + assert: the lambda
+                () -> service.withdraw(1, new BigDecimal("75")));
 
         assertEquals(new BigDecimal("50"), user.getBalance()); // balance untouched
-        verify(transactionRepo, never()).save(any(Transaction.class)); // nothing was logged
+        verify(transactionRepo, never()).save(any(Transaction.class)); // nothing was
     }
 }
