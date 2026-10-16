@@ -1,5 +1,10 @@
 package com.revature.team2.bank3.domain;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,13 +12,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.DecimalMin;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "\"user\"") // user is a reserved word
