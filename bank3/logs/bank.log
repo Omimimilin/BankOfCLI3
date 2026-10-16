@@ -1664,3 +1664,35 @@ Consider the following:
 	If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.
 	If you have database settings to be loaded from a particular profile you may need to activate it (no profiles are currently active).
 
+2026-10-16 13:30:21 [INFO] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.revature.team2.bank3.service.TransactionServiceIntegrationTest]: TransactionServiceIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-10-16 13:30:22 [INFO] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.revature.team2.bank3.Main for test class com.revature.team2.bank3.service.TransactionServiceIntegrationTest
+2026-10-16 13:30:22 [INFO] o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.revature.team2.bank3.service.TransactionServiceIntegrationTest]: TransactionServiceIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-10-16 13:30:22 [INFO] o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.revature.team2.bank3.Main for test class com.revature.team2.bank3.service.TransactionServiceIntegrationTest
+2026-10-16 13:30:22 [INFO] o.s.b.d.r.RestartApplicationListener - Restart disabled due to context in which it is running
+2026-10-16 13:30:22 [INFO] o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.1.3.Final
+2026-10-16 13:30:22 [INFO] c.r.t.b.s.TransactionServiceIntegrationTest - Starting TransactionServiceIntegrationTest using Java 25.0.4.1 with PID 9196 (started by aster in C:\Users\aster\Desktop\Development\Revature\BankOfCLI3\bank3)
+2026-10-16 13:30:22 [INFO] c.r.t.b.s.TransactionServiceIntegrationTest - No active profile set, falling back to 1 default profile: "default"
+2026-10-16 13:30:23 [INFO] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-10-16 13:30:23 [INFO] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 48 ms. Found 2 JPA repository interfaces.
+2026-10-16 13:30:23 [INFO] o.s.b.j.t.a.TestDatabaseAutoConfiguration$EmbeddedDataSourceBeanFactoryPostProcessor - Replacing 'dataSource' DataSource bean with embedded version
+2026-10-16 13:30:23 [INFO] o.s.j.d.e.EmbeddedDatabaseFactory - Starting embedded database: url='jdbc:h2:mem:4d96709d-390e-4d01-b5b5-13a2b375a659;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false', username='sa'
+2026-10-16 13:30:23 [INFO] org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-10-16 13:30:23 [INFO] org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.4.5.Final
+2026-10-16 13:30:24 [INFO] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-10-16 13:30:24 [INFO] o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:4d96709d-390e-4d01-b5b5-13a2b375a659]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: 4D96709D-390E-4D01-B5B5-13A2B375A659/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-10-16 13:30:25 [INFO] org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-10-16 13:30:25 [INFO] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-10-16 13:30:25 [INFO] o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-10-16 13:30:26 [INFO] c.r.t.b.s.TransactionServiceIntegrationTest - Started TransactionServiceIntegrationTest in 4.484 seconds (process running for 5.913)
+2026-10-16 13:30:27 [INFO] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
