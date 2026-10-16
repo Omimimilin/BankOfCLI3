@@ -1,0 +1,13 @@
+<!-- @if (loading()) {
+  <div class="flex animate-pulse flex-col gap-3" aria-busy="true">
+    <div class="h-4 w-3/4 rounded bg-gray-200"></div>
+    <div class="h-4 w-full rounded bg-gray-200"></div>
+    <div class="h-4 w-5/6 rounded bg-gray-200"></div>
+  </div>
+} @else {
+  <ng-content />
+} -->
+
+<div [class]="classes()" [appLoadingSkeleton]="loading()">
+  <ng-content />
+</div>
