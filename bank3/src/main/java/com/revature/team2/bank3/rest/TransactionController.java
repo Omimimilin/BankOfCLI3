@@ -2,6 +2,7 @@ package com.revature.team2.bank3.rest;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -24,14 +26,17 @@ import jakarta.validation.constraints.NotNull;
 // FIXME: mocked class for now!
 @Service
 class TransactionService {
-    public Transaction deposit(String userId, BigDecimal amount) {
+    public Transaction deposit(String username, BigDecimal amount) {
         return new Transaction();
     }
-    public Transaction withdraw(String userId, BigDecimal amount) {
+    public Transaction withdraw(String username, BigDecimal amount) {
         return new Transaction();
     }
-    public Transaction transfer(String userId, String transferId, BigDecimal amount) {
+    public Transaction transfer(String username, String destinationUsername, BigDecimal amount) {
         return new Transaction();
+    }
+    public List<Transaction> getHistory(String username) {
+        return new ArrayList<Transaction>();
     }
 }
 
@@ -93,7 +98,9 @@ public class TransactionController {
     }
 
     @GetMapping
-    public List<Transaction> getTransactions() {
-        return List.of();
+    // FIXME: replace userId with @AuthenticationPrincipal later!
+    // FIXME: TransactionResponse shd replace Transaction, according to the draw.io file!!
+    public List<Transaction> getTransactions(@RequestParam String username) {
+        return transactionService.getHistory(username);
     }
 }
