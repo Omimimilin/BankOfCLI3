@@ -30,14 +30,18 @@ public class UserService {
         return user;
     }
 
+    public boolean existsByUsername(String username) {
+        return this.userRepo.existsByUsername(username);
+    }
+
     @Transactional
-    public void createUser(String username, String name, String pin) {
+    public User createUser(String username, String name, String hashedPin) {
         User newUser = new User(
                 username,
                 name,
-                pin,
+                hashedPin,
                 new BigDecimal(0));
         userRepo.save(newUser);
+        return newUser;
     }
-
 }
