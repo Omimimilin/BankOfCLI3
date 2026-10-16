@@ -21,25 +21,25 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "A financial transaction between bank accounts")
 public class Transaction {
 
-    @Id 
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "Unique transaction ID", accessMode = Schema.AccessMode.READ_ONLY, example = "42")
     private Integer id;
 
     @DecimalMin("0")
-    @Column(name="amount", precision = 20, scale = 2)
+    @Column(name = "amount", precision = 20, scale = 2)
     @Schema(description = "Transaction amount", example = "25.50", minimum = "0")
     private BigDecimal amount;
 
-    @Size(max=20)
-    @Column(name="transfer_type", length = 20)
+    @Size(max = 20)
+    @Column(name = "transfer_type", length = 20)
     @Schema(description = "Type of transfer", example = "deposit", maxLength = 20)
     private String transfer_type;
 
-    @Column(name="timestamp", nullable = false)
+    @Column(name = "timestamp", nullable = false)
     @Schema(description = "Time the transaction occurred", example = "2026-10-15T12:00:00Z")
     private Instant timestamp;
-    
+
     // relationship with account (many transactions from one account)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "source_account", nullable = false)
@@ -51,9 +51,11 @@ public class Transaction {
     @Schema(hidden = true)
     private User destinationAccount;
 
-    public Transaction() {}
+    public Transaction() {
+    }
 
-    public Transaction(BigDecimal amount, String transferType, Instant timestamp, User sourceAccountId, User destinationAccountId) {
+    public Transaction(BigDecimal amount, String transferType, Instant timestamp, User sourceAccountId,
+            User destinationAccountId) {
         this.amount = amount;
         this.transfer_type = transferType;
         this.timestamp = timestamp;
@@ -104,5 +106,10 @@ public class Transaction {
     public void setDestinationAccount(User destination_account) {
         this.destinationAccount = destination_account;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Transaction [id=" + id + ", amount=" + amount + ", transfer_type=" + transfer_type + ", timestamp="
+                + timestamp + ", sourceAccount=" + sourceAccount + ", destinationAccount=" + destinationAccount + "]";
+    }
 }
