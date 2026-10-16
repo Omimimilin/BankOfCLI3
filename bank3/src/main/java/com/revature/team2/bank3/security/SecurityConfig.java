@@ -1,12 +1,16 @@
 // package com.revature.team2.bank3.security;
 
 // import org.springframework.beans.factory.annotation.Value;
-// import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterAutoConfiguration;
 // import org.springframework.context.annotation.Bean;
 // import org.springframework.context.annotation.Configuration;
 // import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+// import org.springframework.security.config.Customizer;
 // import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 // import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+// import org.springframework.security.web.AuthenticationEntryPoint;
+// import org.springframework.security.web.SecurityFilterChain;
+// import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+
 // import java.util.List;
 
 // import org.springframework.web.cors.CorsConfiguration;
@@ -50,12 +54,29 @@
 //     return source;
 // }
 
-// // @Bean
-// // public SecurityFilterAutoConfiguration filterChain(
-// //     HttpSecurity http,
-// //     @Value("${app.security.csrf-cookie.same-site}") String csrfCookiesSameSite)
-// //     throws Exception {
+// @Bean
+// public SecurityFilterChain filterChain(
+//     HttpSecurity http,
+//     @Value("${app.security.csrf-cookie.same-site}") String csrfCookiesSameSite)
+//     throws Exception {
+//         http.authorizeHttpRequests(configurer -> configurer
+//             .requestMatchers(
+//                 "/api/auth/register",
+//                 "/api/auth/login",
+//                 "/swagger-ui/**",
+//                 "/swagger-ui.html",
+//                 "/v3/api-docs/**")
+//                 .permitAll()
+//                 .anyRequest().authenticated()
+//         );
+    
+//     AuthenticationEntryPoint apiAuthenticationEntryPoint =
+//         (request, response, exception) -> response.setStatus(401);
+//     http.httpBasic(httpBasic -> httpBasic.authenticationEntryPoint(apiAuthenticationEntryPoint));
+//     http.cors(Customizer.withDefaults());
+//     http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
 
-// // }
+//     return http.build();
+// }
 
 // }
