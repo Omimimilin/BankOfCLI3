@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.team2.bank3.dto.user.UserResponseDto;
@@ -33,7 +34,7 @@ public class UserController {
      @GetMapping("/{username}")
      @Operation(summary = "Get a user's ID by their username", description = "Returns the user ID the user with the supplied username")
      public ResponseEntity<BankApiResponse<Integer>> getIdByUsername(
-               @Parameter(description = "Username of the user", example = "1") @PathVariable String username) {
+               @Parameter(description = "Username of the user", example = "1") @RequestParam @PathVariable String username) {
           // TODO: implement user service to find user by username
 
           return BankApiResponse.success(HttpStatus.OK, null);
