@@ -4,20 +4,40 @@ import com.revature.team2.bank3.domain.User;
 import com.revature.team2.bank3.exceptions.UserNotFoundException;
 import com.revature.team2.bank3.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
+
+import java.math.BigDecimal;
+
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
-    private final UserRepository accountRepo;
+    private final UserRepository userRepo;
 
-    public UserService(UserRepository accountRepo) {
-        this.accountRepo = accountRepo;
+    public UserService(UserRepository userRepo) {
+        this.userRepo = userRepo;
     }
 
-    public User getAccount(int id) {
-        User user = accountRepo.findById(id)
+    public User getUserById(int id) {
+        User user = userRepo.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User record was not found"));
         return user;
+    }
+
+    public User getUserByUsername(String username) {
+        User user = userRepo.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User record was not found"));
+        return user;
+    }
+
+    @Transactional
+    public void createUser(String username, String name, String pin) {
+        User newUser = new User(
+                username,
+                name,
+                pin,
+                new BigDecimal(0));
+        userRepo.save(newUser);
     }
 
 }
