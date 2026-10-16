@@ -36,13 +36,15 @@ class TransactionServiceIntegrationTest {
 
         // ACT: call the real service, which loads the user, changes balance, saves a
         // Transaction
-        service.deposit(saved.getId(), new BigDecimal("25.00"));
+        service.deposit(saved.getUsername(), new BigDecimal("25.00"));
 
         // ASSERT 1: reload the user from the DB; compareTo == 0 ignores scale (75.0
         // 75.00)
-        assertEquals(0, new BigDecimal("75.00").compareTo(userRepo.findById(saved.getId()).orElseThrow().getBalance()));
+        assertEquals(0,
+                new BigDecimal("75.00")
+                        .compareTo(userRepo.findByUsername(saved.getUsername()).orElseThrow().getBalance()));
         // ASSERT 2: run the real history query (findByUserOrderByCreatedAtDesc)
-        List<Transaction> history = service.getHistory(saved.getId());
+        List<Transaction> history = service.getHistory(saved.getUsername());
         assertEquals(1, history.size()); // exactly one history row was written
         assertEquals("deposit", history.get(0).getTransferType()); // and it is labelled
     }
@@ -51,9 +53,9 @@ class TransactionServiceIntegrationTest {
     void depositNegativeAmountAndHistoryEmpty() {
         User saved = userRepo.saveAndFlush(new User("alice", "Alice", "1234", new BigDecimal("50.00")));
         assertThrows(InvalidAmountException.class, () -> {
-            service.deposit(saved.getId(), new BigDecimal("-100"));
+            service.deposit(saved.getUsername(), new BigDecimal("-100"));
         });
-        List<Transaction> history = service.getHistory(saved.getId());
+        List<Transaction> history = service.getHistory(saved.getUsername());
         assertEquals(0, history.size());
     }
 
@@ -61,9 +63,9 @@ class TransactionServiceIntegrationTest {
     void withdrawNegativeAmountAndHistoryEmpty() {
         User saved = userRepo.saveAndFlush(new User("alice", "Alice", "1234", new BigDecimal("50.00")));
         assertThrows(InvalidAmountException.class, () -> {
-            service.withdraw(saved.getId(), new BigDecimal("-100"));
+            service.withdraw(saved.getUsername(), new BigDecimal("-100"));
         });
-        List<Transaction> history = service.getHistory(saved.getId());
+        List<Transaction> history = service.getHistory(saved.getUsername());
         assertEquals(0, history.size());
     }
 
@@ -71,9 +73,9 @@ class TransactionServiceIntegrationTest {
     void transferToSameAccount() {
         User saved = userRepo.saveAndFlush(new User("alice", "Alice", "1234", new BigDecimal("50.00")));
         assertThrows(SelfTransferNotAllowedException.class, () -> {
-            service.transfer(saved.getId(), saved.getId(), new BigDecimal("100"));
+            service.transfer(saved.getUsername(), saved.getUsername(), new BigDecimal("100"));
         });
-        List<Transaction> history = service.getHistory(saved.getId());
+        List<Transaction> history = service.getHistory(saved.getUsername());
         assertEquals(0, history.size());
     }
 
@@ -82,19 +84,21 @@ class TransactionServiceIntegrationTest {
         User saved1 = userRepo.saveAndFlush(new User("alice", "Alice", "1234", new BigDecimal("50.00")));
         User saved2 = userRepo.saveAndFlush(new User("pedro", "Pedro", "1234", new BigDecimal("100.00")));
         // mock transaction
-        service.transfer(saved1.getId(), saved2.getId(), new BigDecimal("20"));
+        service.transfer(saved1.getUsername(), saved2.getUsername(), new BigDecimal("20"));
         assertEquals(0,
-                new BigDecimal("30.00").compareTo(userRepo.findById(saved1.getId()).orElseThrow().getBalance()));
+                new BigDecimal("30.00")
+                        .compareTo(userRepo.findByUsername(saved1.getUsername()).orElseThrow().getBalance()));
         assertEquals(0,
-                new BigDecimal("120.00").compareTo(userRepo.findById(saved2.getId()).orElseThrow().getBalance()));
+                new BigDecimal("120.00")
+                        .compareTo(userRepo.findByUsername(saved2.getUsername()).orElseThrow().getBalance()));
 
         System.out.print("\n\n\n\n");
-        List<Transaction> history1 = service.getHistory(saved1.getId());
+        List<Transaction> history1 = service.getHistory(saved1.getUsername());
         for (Transaction tx : history1) {
             System.out.println(tx);
         }
         assertEquals(1, history1.size());
-        List<Transaction> history2 = service.getHistory(saved2.getId());
+        List<Transaction> history2 = service.getHistory(saved2.getUsername());
         for (Transaction tx : history2) {
             System.out.println(tx);
         }
@@ -102,58 +106,60 @@ class TransactionServiceIntegrationTest {
         assertEquals(1, history2.size());
     }
 
-    private void assertBalance(String expected, Integer id) {
-        assertEquals(0, new BigDecimal(expected).compareTo(userRepo.findById(id).orElseThrow().getBalance()));
+    private void assertBalance(String expected, String username) {
+        assertEquals(0,
+                new BigDecimal(expected).compareTo(userRepo.findByUsername(username).orElseThrow().getBalance()));
     }
 
     @Test
     void threeDepositsSumCorrectlyAndWriteThreeHistoryRows() {
         User saved = userRepo.saveAndFlush(new User("alice", "Alice", "1234", new BigDecimal("50.00")));
-        service.deposit(saved.getId(), new BigDecimal("10.00"));
-        service.deposit(saved.getId(), new BigDecimal("20.50"));
-        service.deposit(saved.getId(), new BigDecimal("0.25"));
+        service.deposit(saved.getUsername(), new BigDecimal("10.00"));
+        service.deposit(saved.getUsername(), new BigDecimal("20.50"));
+        service.deposit(saved.getUsername(), new BigDecimal("0.25"));
 
-        assertBalance("80.75", saved.getId());
-        assertEquals(3, service.getHistory(saved.getId()).size());
+        assertBalance("80.75", saved.getUsername());
+        assertEquals(3, service.getHistory(saved.getUsername()).size());
     }
 
     @Test
     void bigDepositThenThreeWithdrawalsLeavesCorrectBalance() {
         User saved = userRepo.saveAndFlush(new User("alice", "Alice", "1234", new BigDecimal("0.00")));
-        service.deposit(saved.getId(), new BigDecimal("1000.00"));
-        service.withdraw(saved.getId(), new BigDecimal("100.00"));
-        service.withdraw(saved.getId(), new BigDecimal("250.50"));
-        service.withdraw(saved.getId(), new BigDecimal("49.50"));
+        service.deposit(saved.getUsername(), new BigDecimal("1000.00"));
+        service.withdraw(saved.getUsername(), new BigDecimal("100.00"));
+        service.withdraw(saved.getUsername(), new BigDecimal("250.50"));
+        service.withdraw(saved.getUsername(), new BigDecimal("49.50"));
 
-        assertBalance("600.00", saved.getId());
-        assertEquals(4, service.getHistory(saved.getId()).size()); // 1 deposit + 3 withdrawals
+        assertBalance("600.00", saved.getUsername());
+        assertEquals(4, service.getHistory(saved.getUsername()).size()); // 1 deposit + 3 withdrawals
     }
 
     @Test
     void withdrawMoreThanBalanceThrowsAndChangesNothing() {
         User saved = userRepo.saveAndFlush(new User("alice", "Alice", "1234", new BigDecimal("50.00")));
-        assertThrows(InsufficientFundsException.class, () -> service.withdraw(saved.getId(), new BigDecimal("75.00")));
+        assertThrows(InsufficientFundsException.class,
+                () -> service.withdraw(saved.getUsername(), new BigDecimal("75.00")));
 
-        assertBalance("50.00", saved.getId());
-        assertEquals(0, service.getHistory(saved.getId()).size());
+        assertBalance("50.00", saved.getUsername());
+        assertEquals(0, service.getHistory(saved.getUsername()).size());
     }
 
     @Test
     void withdrawExactBalanceLeavesZero() {
         User saved = userRepo.saveAndFlush(new User("alice", "Alice", "1234", new BigDecimal("50.00")));
-        service.withdraw(saved.getId(), new BigDecimal("50.00"));
+        service.withdraw(saved.getUsername(), new BigDecimal("50.00"));
 
-        assertBalance("0.00", saved.getId());
+        assertBalance("0.00", saved.getUsername());
     }
 
     @Test
     void transferToNonExistentAccountThrowsAndChangesNothing() {
         User saved = userRepo.saveAndFlush(new User("alice", "Alice", "1234", new BigDecimal("50.00")));
         assertThrows(UserNotFoundException.class,
-                () -> service.transfer(saved.getId(), 99999, new BigDecimal("20.00")));
+                () -> service.transfer(saved.getUsername(), "99999", new BigDecimal("20.00")));
 
-        assertBalance("50.00", saved.getId());
-        assertEquals(0, service.getHistory(saved.getId()).size());
+        assertBalance("50.00", saved.getUsername());
+        assertEquals(0, service.getHistory(saved.getUsername()).size());
     }
 
     @Test
@@ -161,9 +167,9 @@ class TransactionServiceIntegrationTest {
         User alice = userRepo.saveAndFlush(new User("alice", "Alice", "1234", new BigDecimal("50.00")));
         User pedro = userRepo.saveAndFlush(new User("pedro", "Pedro", "1234", new BigDecimal("100.00")));
         assertThrows(InsufficientFundsException.class,
-                () -> service.transfer(alice.getId(), pedro.getId(), new BigDecimal("75.00")));
+                () -> service.transfer(alice.getUsername(), pedro.getUsername(), new BigDecimal("75.00")));
 
-        assertBalance("50.00", alice.getId());
-        assertBalance("100.00", pedro.getId());
+        assertBalance("50.00", alice.getUsername());
+        assertBalance("100.00", pedro.getUsername());
     }
 }

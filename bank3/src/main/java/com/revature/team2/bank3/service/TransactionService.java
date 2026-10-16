@@ -27,8 +27,8 @@ public class TransactionService {
     }
 
     @Transactional
-    public void deposit(int id, BigDecimal amount) {
-        User user = userService.getAccount(id);
+    public void deposit(String username, BigDecimal amount) {
+        User user = userService.getUserByUsername(username);
         increaseBalance(user, amount);
         Transaction tx = new Transaction(
                 amount,
@@ -51,9 +51,9 @@ public class TransactionService {
     }
 
     @Transactional
-    public void withdraw(int id, BigDecimal amount) {
+    public void withdraw(String username, BigDecimal amount) {
 
-        User user = userService.getAccount(id);
+        User user = userService.getUserByUsername(username);
         decreaseBalance(user, amount);
         Transaction tx = new Transaction(
                 amount,
@@ -79,12 +79,12 @@ public class TransactionService {
     }
 
     @Transactional
-    public void transfer(int fromId, int toId, BigDecimal amount) {
-        if (fromId == toId) {
+    public void transfer(String fromUsername, String toUsername, BigDecimal amount) {
+        if (fromUsername == toUsername) {
             throw new SelfTransferNotAllowedException("Transferring to the same account is an invalid operation");
         }
-        User fromUser = userService.getAccount(fromId);
-        User toUser = userService.getAccount(toId);
+        User fromUser = userService.getUserByUsername(fromUsername);
+        User toUser = userService.getUserByUsername(toUsername);
         decreaseBalance(fromUser, amount);
         increaseBalance(toUser, amount);
         Transaction fromTX = new Transaction(
@@ -105,8 +105,8 @@ public class TransactionService {
     }
 
     @Transactional(readOnly = true)
-    public List<Transaction> getHistory(int id) {
-        User user = userService.getAccount(id);
+    public List<Transaction> getHistory(String username) {
+        User user = userService.getUserByUsername(username);
         List<Transaction> history = transactionRepo.findBySourceAccount_IdOrDestinationAccount_Id(user.getId(), null,
                 Sort.by("timestamp"));
         return history;
