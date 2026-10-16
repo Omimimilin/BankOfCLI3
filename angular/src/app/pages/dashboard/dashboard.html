@@ -1,0 +1,14 @@
+<h1>Balance</h1>
+@if (error()) {
+    <p>{{error()}}</p>
+} @else if (balance() === null) {
+    <p>Loading...</p>
+} @else {
+    <p>{{ name() }}</p>
+    <p>{{ balance() | currency }}</p>
+}
+<a routerLink="/deposit">Deposit</a>
+<a routerLink="/withdraw">Withdraw</a>
+<a routerLink="/transfer">Transfer</a>
+<a routerLink="/history">History</a>
+<button type="button" (click)="logout()">Logout</button>"

@@ -1,0 +1,12 @@
+<h1>{{ kind }}</h1>
+<form [formGroup]="form" (ngSubmit)="submit()">
+    <label>Amount <input formControlName="amount" type="number" min="0.01" step="0.01" /></label>
+    @if (kind === 'transfer') {
+        <label>To <input formControlName="destinationUsername" /></label>
+    }
+    <button type="submit">Submit</button>
+    @if (error()) {
+        <p>{{ error() }}</p>
+    }
+</form>
+<a routerLink="/dashboard">Back</a>

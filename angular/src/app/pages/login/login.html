@@ -1,0 +1,9 @@
+<h1>Login</h1>
+<form [formGroup]="form" (ngSubmit)="submit()">
+    <label>Username <input formControlname="username" /></label>
+    <label>PIN <input formControlName="pin" type="password" maxlength="4" /></label>
+    <button type="submit">Login</button>
+    @if (error()) {
+        <p>{{ error() }}</p>
+    }
+</form>"
