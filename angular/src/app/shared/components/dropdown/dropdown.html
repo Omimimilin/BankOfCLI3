@@ -1,0 +1,6 @@
+<select [disabled]="disabled()" (change)="value.set($any($event.target).value)" [class]="classes()">
+  <option value="" [selected]="!value()">{{ placeHolder() }}</option>
+  @for (option of options(); track option) {
+    <option [value]="option" [selected]="option === value()">{{ option }}</option>
+  }
+</select>

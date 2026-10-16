@@ -1,0 +1,39 @@
+<div class="mx-auto flex max-w-xl flex-col gap-4 p-6">
+  <app-card>
+    <h1 class="text-2xl font-semibold">{{ title() }}</h1>
+    <p class="mt-2">This transaction is approved immediately.</p>
+
+    <div class="mt-4 flex flex-col gap-4">
+      <div>
+        <label for="amount">Amount</label>
+        <app-input inputId="amount" type="number" placeholder="0.00" [(value)]="amount" />
+      </div>
+
+      @if (isTransfer()) {
+        <div>
+          <label for="recipient">Destination account</label>
+          <app-input
+            inputId="recipient"
+            type="text"
+            placeholder="ACT-1002"
+            [(value)]="recipientAccountId"
+          />
+        </div>
+      }
+
+      <div>
+        <label for="notes">Notes</label>
+        <app-input inputId="notes" type="text" placeholder="Optional" [(value)]="description" />
+      </div>
+
+      @if (error()) {
+        <p>{{ error() }}</p>
+      }
+
+      <div class="flex gap-3">
+        <app-button (clicked)="submit()">Continue</app-button>
+        <a routerLink="/dashboard">Cancel</a>
+      </div>
+    </div>
+  </app-card>
+</div>

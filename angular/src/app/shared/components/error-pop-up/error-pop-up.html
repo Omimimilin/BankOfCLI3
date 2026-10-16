@@ -1,0 +1,37 @@
+<div class="flex items-center gap-(--space-s) px-6 pt-6 pb-2 bg-[#F8F8F8]">
+  <span
+    class="flex size-11 shrink-0 items-center justify-center rounded-full border border-red-500 bg-red-100"
+    aria-hidden="true"
+  >
+    <ng-icon name="matErrorRound" size="26" class="text-red-600!" />
+  </span>
+  <div class="min-w-0">
+    <h1 mat-dialog-title class="m-0! p-0! font-bold! text-gray-900 text-(length:--step-5)!">
+      Transaction Failed
+    </h1>
+    <p class="truncate text-(--primary-dark-30) text-(length:--step-0)">
+      Nothing was sent. Review it and try again.
+    </p>
+  </div>
+</div>
+
+<mat-dialog-content class="bg-[#F8F8F8]">
+  <div role="alert" class="pt-2">
+    <app-card
+      class="flex items-center justify-center border-red-500 bg-red-100 text-center shadow-none"
+    >
+      <span class="font-semibold wrap-break-words text-red-700 text-(length:--step-4)">
+        {{ data.error }}
+      </span>
+    </app-card>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions
+  class="flex flex-col gap-(--space-s) px-6! pb-6! sm:flex-row sm:justify-end bg-[#F8F8F8]"
+>
+  <!-- [mat-dialog-close]="true" closes the dialog and sends `true` back to the parent. -->
+  <div class="button-container sm:min-w-40">
+    <button [mat-dialog-close]="true">Continue</button>
+  </div>
+</mat-dialog-actions>

@@ -1,0 +1,13 @@
+<mat-dialog-content class="flex! justify-center py-20! bg-[#F8F8F8]">
+  <div class="loader" role="status" aria-label="Processing"></div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="px-6! pb-6! bg-[#F8F8F8]">
+  <!-- Closes with `false`; the parent treats it as "go back". Auto-close sends `true`. -->
+  <button
+    [mat-dialog-close]="false"
+    class="w-full cursor-pointer rounded-xl border-2 border-(--primary-white-70) px-6 py-3 font-semibold text-(--primary-dark-20) transition hover:bg-(--primary-white-90)"
+  >
+    Cancel
+  </button>
+</mat-dialog-actions>

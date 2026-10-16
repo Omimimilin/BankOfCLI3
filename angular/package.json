@@ -1,5 +1,5 @@
 {
-  "name": "bank-app",
+  "name": "bank-of-cli-p-2",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -11,21 +11,33 @@
   "private": true,
   "packageManager": "npm@10.8.2",
   "dependencies": {
+    "@angular/cdk": "^22.2.1",
     "@angular/common": "^22.2.0",
     "@angular/compiler": "^22.2.0",
     "@angular/core": "^22.2.0",
     "@angular/forms": "^22.2.0",
+    "@angular/material": "^22.2.1",
     "@angular/platform-browser": "^22.2.0",
     "@angular/router": "^22.2.0",
+    "@ng-icons/core": "^36.1.0",
+    "@ng-icons/lucide": "^36.1.0",
+    "@ng-icons/material-symbols": "^36.1.0",
+    "@ng-icons/remixicon": "^36.1.0",
+    "chart.js": "^4.5.1",
+    "jose": "^6.2.12",
     "rxjs": "~7.8.0",
+    "tailwind-merge": "^3.7.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
     "@angular/build": "^22.2.1",
     "@angular/cli": "^22.2.1",
     "@angular/compiler-cli": "^22.2.0",
+    "@tailwindcss/postcss": "^4.1.12",
     "jsdom": "^30.0.0",
+    "postcss": "^8.5.3",
     "prettier": "^3.8.1",
+    "tailwindcss": "^4.1.12",
     "typescript": "~6.0.2",
     "vitest": "^5.0.0"
   }

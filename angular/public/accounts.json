@@ -1,0 +1,16 @@
+[
+  {
+    "accountId": "ACT-1001",
+    "accountPin": "1234",
+    "accountName": "John Doe",
+    "balance": 12450,
+    "dateCreated": "2026-01-15T14:00:00.000Z"
+  },
+  {
+    "accountId": "ACT-1002",
+    "accountPin": "5678",
+    "accountName": "John Smith",
+    "balance": 3200,
+    "dateCreated": "2026-02-02T14:00:00.000Z"
+  }
+]

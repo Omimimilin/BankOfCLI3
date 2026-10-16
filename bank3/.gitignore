@@ -33,3 +33,7 @@ build/
 .vscode/
 
 logs/bank.log
+logs
+
+# System files
+.DS_Store
