@@ -15,33 +15,33 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Size;
 
-@Entity 
-@Table(name="users")
+@Entity
+@Table(name = "\"user\"") // user is a reserved word
 
 @Schema(description = "A bank account user")
 public class User {
 
-    @Id 
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "Unique user ID", accessMode = Schema.AccessMode.READ_ONLY)
     private Integer id;
 
-    @Size(max=20)
-    @Column(name="username", length = 20)
+    @Size(max = 20)
+    @Column(name = "username", length = 20, unique = true)
     private String username;
 
-    @Size(max=20)
-    @Column(name="name", length = 20)
+    @Size(max = 20)
+    @Column(name = "name", length = 20)
     @Schema(description = "The user's full name", example = "John Doe")
     private String name;
 
-    @Size(max=20)
-    @Column(name="pin", length = 20)
+    @Size(max = 20)
+    @Column(name = "pin", length = 20)
     @Schema(description = "The user's PIN", example = "1234")
     private String pin;
 
     @DecimalMin("0")
-    @Column(name="balance", precision = 20, scale = 2)
+    @Column(name = "balance", precision = 20, scale = 2)
     @Schema(description = "Current account balance", example = "1000.00")
     private BigDecimal balance;
 
@@ -57,8 +57,22 @@ public class User {
         this.balance = balance;
     }
 
+    public User(String username, String name, String pin, BigDecimal balance) {
+        this.username = username;
+        this.name = name;
+        this.pin = pin;
+        this.balance = balance;
+    }
+
     // required for hibernate
-    public User() {}
+    public User() {
+    }
+
+    @Override
+    public String toString() {
+        return "User [id=" + id + ", username=" + username + ", name=" + name + ", pin=" + pin + ", balance=" + balance
+                + ", transactions=" + transactions + "]";
+    }
 
     public Integer getId() {
         return id;
@@ -103,5 +117,5 @@ public class User {
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
-    
+
 }
