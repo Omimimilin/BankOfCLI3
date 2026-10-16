@@ -34,10 +34,10 @@ class TransactionServiceTest {
     @Test // marks a method JUnit should run
     void withdrawMoreThanBalanceThrowsAndChangesNothing() {
         User user = new User(1, "alice", "Alice", "1234", new BigDecimal("50")); // arrange:
-        when(userService.getAccount(1)).thenReturn(user); // stub: "when asked for
+        when(userService.getUserByUsername("alice")).thenReturn(user); // stub: "when asked for
         System.out.print(user.getBalance());
         assertThrows(InsufficientFundsException.class, // act + assert: the lambda
-                () -> service.withdraw(1, new BigDecimal("75")));
+                () -> service.withdraw("alice", new BigDecimal("75")));
 
         assertEquals(new BigDecimal("50"), user.getBalance()); // balance untouched
         verify(transactionRepo, never()).save(any(Transaction.class)); // nothing was
