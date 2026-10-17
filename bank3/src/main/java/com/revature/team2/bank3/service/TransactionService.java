@@ -29,7 +29,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public void deposit(String username, BigDecimal amount) {
+    public Transaction deposit(String username, BigDecimal amount) {
         User user = userService.getUserByUsername(username);
         increaseBalance(user, amount);
         Transaction tx = new Transaction(
@@ -38,8 +38,9 @@ public class TransactionService {
                 Instant.now(),
                 user,
                 null);
-        transactionRepo.save(tx);
-        log.info("Deposit transaction saved for user ID: {}", id);
+        Transaction saved = transactionRepo.save(tx);
+        log.info("Deposit transaction saved for username: {}", username);
+        return saved;
     }
 
     private void increaseBalance(User user, BigDecimal amount) {
@@ -55,7 +56,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public void withdraw(String username, BigDecimal amount) {
+    public Transaction withdraw(String username, BigDecimal amount) {
 
         User user = userService.getUserByUsername(username);
         decreaseBalance(user, amount);
@@ -65,8 +66,9 @@ public class TransactionService {
                 Instant.now(),
                 user,
                 null);
-        transactionRepo.save(tx);
-        log.info("Withdraw transaction saved for user ID: {}", id);
+        Transaction saved = transactionRepo.save(tx);
+        log.info("Withdraw transaction saved for username: {}", username);
+        return saved;
     }
 
     private void decreaseBalance(User user, BigDecimal amount) {
@@ -85,8 +87,8 @@ public class TransactionService {
     }
 
     @Transactional
-    public void transfer(String fromUsername, String toUsername, BigDecimal amount) {
-        if (fromUsername == toUsername) {
+    public Transaction transfer(String fromUsername, String toUsername, BigDecimal amount) {
+        if (fromUsername.equals(toUsername)) {
             throw new SelfTransferNotAllowedException("Transferring to the same account is an invalid operation");
         }
         User fromUser = userService.getUserByUsername(fromUsername);
@@ -106,9 +108,10 @@ public class TransactionService {
                 toUser,
                 fromUser);
 
-        transactionRepo.save(fromTX);
+        Transaction saved = transactionRepo.save(fromTX);
         transactionRepo.save(toTX);
-        log.info("Transfer transaction saved from user ID: {} to user ID: {}", fromId, toId);
+        log.info("Transfer transaction saved from username: {} to username: {}", fromUsername, toUsername);
+        return saved;
     }
 
     @Transactional(readOnly = true)
