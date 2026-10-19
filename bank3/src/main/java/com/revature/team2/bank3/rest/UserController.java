@@ -20,7 +20,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@CrossOrigin(origins = "*") // TODO: setup CORS correctly
 @RequestMapping("/api/users")
 @Tag(name = "Users", description = "Operations for managing users")
 public class UserController {
