@@ -12,6 +12,7 @@ import com.revature.team2.bank3.dto.auth.RegisterResponseDto;
 import com.revature.team2.bank3.exceptions.UserNotFoundException;
 import com.revature.team2.bank3.rest.ResponseContract;
 import com.revature.team2.bank3.security.JwtUtil;
+import com.revature.team2.bank3.security.SecurityConfig;
 
 import jakarta.transaction.Transactional;
 
@@ -19,10 +20,12 @@ import jakarta.transaction.Transactional;
 public class AuthService {
     private final UserService userService;
     private final JwtUtil jwtUtil;
+    private final SecurityConfig securityConfig;
 
-    public AuthService(UserService userService, JwtUtil jwtUtil) {
+    public AuthService(UserService userService, JwtUtil jwtUtil, SecurityConfig securityConfig) {
         this.userService = userService;
         this.jwtUtil = jwtUtil;
+        this.securityConfig = securityConfig;
     }
 
     @Transactional
@@ -34,7 +37,8 @@ public class AuthService {
         User user = this.userService.createUser(
                 requestDto.username(),
                 requestDto.name(),
-                requestDto.plainTextPin()); // TODO: Hash the pin
+                securityConfig.passwordEncoder()
+                    .encode(requestDto.plainTextPin()));
         var responseDto = new RegisterResponseDto(
                 user.getId(),
                 user.getUsername(),
@@ -46,9 +50,9 @@ public class AuthService {
         try {
             User user = this.userService.getUserByUsername(requestDto.username());
 
-            String hashedPin = requestDto.plainTextPin(); // TODO: Hash the pin
-
-            if (user.getPin().equals(hashedPin)) {
+            if (securityConfig.passwordEncoder().matches(
+                 requestDto.plainTextPin(),
+                 user.getPin())) {
                 String jwt = jwtUtil.generateToken(user);
                 LoginResponseDto responseDto = new LoginResponseDto(
                         user.getId(),
