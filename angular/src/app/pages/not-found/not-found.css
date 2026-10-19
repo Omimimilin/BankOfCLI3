@@ -1,0 +1,27 @@
+.not-found {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+h1 {
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+p {
+  margin: 1rem 0 2rem;
+}
+
+a {
+  display: inline-block;
+  padding: 0.5rem 1.5rem;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    oklch(from var(--primary) l c calc(h - 20)),
+    oklch(from var(--primary) l c calc(h + 20))
+  );
+  color: #fff;
+  font-weight: 700;
+}

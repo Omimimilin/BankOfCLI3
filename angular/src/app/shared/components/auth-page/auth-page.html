@@ -1,0 +1,24 @@
+<div class="wrapper">
+  <div class="tablet-background"></div>
+  <div class="card">
+    <div class="left">
+      <app-logo fill="white"></app-logo>
+      <div>
+        <h2>You can easily</h2>
+        <h3>View account balance, deposit, withdraw, transfer money at any time.</h3>
+      </div>
+    </div>
+    <div class="right">
+      <app-auth
+        [heading]="heading()"
+        [description]="description()"
+        [buttonText]="buttonText()"
+        [footerText]="footerText()"
+        [footerActionText]="footerActionText()"
+        [footerActionLink]="footerActionLink()"
+        [callback]="callback()"
+        [fields]="fields()"
+      ></app-auth>
+    </div>
+  </div>
+</div>

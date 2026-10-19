@@ -1,0 +1,77 @@
+/* @layer components { */
+@keyframes l7 {
+  33% {
+    background-size:
+      calc(100% / 3) 0%,
+      calc(100% / 3) 100%,
+      calc(100% / 3) 100%;
+  }
+  50% {
+    background-size:
+      calc(100% / 3) 100%,
+      calc(100% / 3) 0%,
+      calc(100% / 3) 100%;
+  }
+  66% {
+    background-size:
+      calc(100% / 3) 100%,
+      calc(100% / 3) 100%,
+      calc(100% / 3) 0%;
+  }
+}
+
+.button-container {
+  position: relative;
+
+  .loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 2rem;
+    aspect-ratio: 4;
+    --_g: no-repeat radial-gradient(circle closest-side, #fff 90%, #0000);
+    background:
+      var(--_g) 0% 50%,
+      var(--_g) 50% 50%,
+      var(--_g) 100% 50%;
+    background-size: calc(100% / 3) 100%;
+    animation: l7 1s infinite linear;
+  }
+
+  button {
+    width: 100%;
+    background: linear-gradient(
+      to right,
+      oklch(from var(--primary) l c calc(h - 20)),
+      oklch(from var(--primary) l c calc(h + 20))
+    );
+    color: white;
+    font-weight: 600;
+    font-size: var(--step-1);
+    padding: 0.75em 1em;
+    border-radius: 0.75rem;
+    transition:
+      outline 0.3s ease,
+      filter 0.3s ease;
+
+    &:enabled {
+      cursor: pointer;
+      &:hover {
+        outline: none;
+        filter: hue-rotate(30deg);
+      }
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      filter: opacity(0.75);
+    }
+  }
+
+  .transparent {
+    color: transparent;
+  }
+}
+/* } */

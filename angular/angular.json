@@ -2,11 +2,12 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "npm",
+    "analytics": false
   },
   "newProjectRoot": "projects",
   "projects": {
-    "bank-app": {
+    "Bank-of-CLI-P-2": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -24,7 +25,7 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.css"]
+            "styles": ["src/material-theme.scss", "src/styles.css"]
           },
           "configurations": {
             "production": {
@@ -54,10 +55,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "bank-app:build:production"
+              "buildTarget": "Bank-of-CLI-P-2:build:production"
             },
             "development": {
-              "buildTarget": "bank-app:build:development"
+              "buildTarget": "Bank-of-CLI-P-2:build:development"
             }
           },
           "defaultConfiguration": "development"

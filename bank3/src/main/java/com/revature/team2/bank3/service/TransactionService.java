@@ -4,8 +4,11 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.revature.team2.bank3.domain.Transaction;
 import com.revature.team2.bank3.domain.User;
@@ -14,12 +17,11 @@ import com.revature.team2.bank3.exceptions.InvalidAmountException;
 import com.revature.team2.bank3.exceptions.SelfTransferNotAllowedException;
 import com.revature.team2.bank3.repository.TransactionRepository;
 
-import org.springframework.transaction.annotation.Transactional;
-
 @Service
 public class TransactionService {
     private final TransactionRepository transactionRepo;
     private final UserService userService;
+    private static final Logger log = LoggerFactory.getLogger(TransactionService.class);
 
     public TransactionService(TransactionRepository transactionRepo, UserService userService) {
         this.transactionRepo = transactionRepo;
@@ -37,6 +39,7 @@ public class TransactionService {
                 user,
                 null);
         transactionRepo.save(tx);
+        log.info("Deposit transaction saved for {}", username);
     }
 
     private void increaseBalance(User user, BigDecimal amount) {
@@ -48,6 +51,7 @@ public class TransactionService {
             throw new InvalidAmountException("Deposit amount must be positive");
         }
         user.setBalance(user.getBalance().add(amount));
+        log.info("Balance increased for user ID: {}. New balance: {}", user.getId(), user.getBalance());
     }
 
     @Transactional
@@ -62,6 +66,7 @@ public class TransactionService {
                 user,
                 null);
         transactionRepo.save(tx);
+        log.info("Withdraw transaction saved for {}", username);
     }
 
     private void decreaseBalance(User user, BigDecimal amount) {
@@ -76,6 +81,7 @@ public class TransactionService {
             throw new InsufficientFundsException("Current Amount will lead to Overdrafting");
         }
         user.setBalance(user.getBalance().subtract(amount));
+        log.info("Balance decreased for user ID: {}. New balance: {}", user.getId(), user.getBalance());
     }
 
     @Transactional
@@ -102,6 +108,7 @@ public class TransactionService {
 
         transactionRepo.save(fromTX);
         transactionRepo.save(toTX);
+        log.info("Transfer transaction saved from {} to {}", fromUsername, toUsername);
     }
 
     @Transactional(readOnly = true)

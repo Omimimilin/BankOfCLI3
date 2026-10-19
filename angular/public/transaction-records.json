@@ -1,0 +1,123 @@
+[
+  {
+    "transactionId": "tx-1001",
+    "accountId": "ACT-1001",
+    "recipientAccountId": null,
+    "amount": 10000,
+    "description": "Opening deposit",
+    "transactionType": "DEPOSIT",
+    "dateCreated": "2026-01-15T15:00:00.000Z",
+    "transferId": null,
+    "transactionStatus": "APPROVED"
+  },
+  {
+    "transactionId": "tx-1002",
+    "accountId": "ACT-1002",
+    "recipientAccountId": null,
+    "amount": 4000,
+    "description": "Opening deposit",
+    "transactionType": "DEPOSIT",
+    "dateCreated": "2026-02-02T15:00:00.000Z",
+    "transferId": null,
+    "transactionStatus": "APPROVED"
+  },
+  {
+    "transactionId": "tx-1003",
+    "accountId": "ACT-1001",
+    "recipientAccountId": "ACT-1002",
+    "amount": 500,
+    "description": "Transfer to John Smith",
+    "transactionType": "TRANSFER_OUT",
+    "dateCreated": "2026-03-10T16:00:00.000Z",
+    "transferId": "tr-1001",
+    "transactionStatus": "APPROVED"
+  },
+  {
+    "transactionId": "tx-1004",
+    "accountId": "ACT-1002",
+    "recipientAccountId": "ACT-1001",
+    "amount": 500,
+    "description": "Transfer from John Doe",
+    "transactionType": "TRANSFER_IN",
+    "dateCreated": "2026-03-10T16:00:00.000Z",
+    "transferId": "tr-1001",
+    "transactionStatus": "APPROVED"
+  },
+  {
+    "transactionId": "tx-1005",
+    "accountId": "ACT-1001",
+    "recipientAccountId": null,
+    "amount": 3000,
+    "description": "Paycheck",
+    "transactionType": "DEPOSIT",
+    "dateCreated": "2026-06-01T14:00:00.000Z",
+    "transferId": null,
+    "transactionStatus": "APPROVED"
+  },
+  {
+    "transactionId": "tx-1006",
+    "accountId": "ACT-1001",
+    "recipientAccountId": null,
+    "amount": 50,
+    "description": "ATM withdrawal",
+    "transactionType": "WITHDRAW",
+    "dateCreated": "2026-08-20T18:00:00.000Z",
+    "transferId": null,
+    "transactionStatus": "APPROVED"
+  },
+  {
+    "transactionId": "tx-1007",
+    "accountId": "ACT-1002",
+    "recipientAccountId": null,
+    "amount": 1300,
+    "description": "ATM withdrawal",
+    "transactionType": "WITHDRAW",
+    "dateCreated": "2026-09-01T13:00:00.000Z",
+    "transferId": null,
+    "transactionStatus": "APPROVED"
+  },
+  {
+    "transactionId": "tx-1008",
+    "accountId": "ACT-1001",
+    "recipientAccountId": null,
+    "amount": 20000,
+    "description": "ATM withdrawal",
+    "transactionType": "WITHDRAW",
+    "dateCreated": "2026-10-01T15:00:00.000Z",
+    "transferId": null,
+    "transactionStatus": "REJECTED"
+  },
+  {
+    "transactionId": "tx-1009",
+    "accountId": "ACT-1001",
+    "recipientAccountId": "ACT-1002",
+    "amount": 100,
+    "description": "Transfer to John Smith",
+    "transactionType": "TRANSFER_OUT",
+    "dateCreated": "2026-10-05T14:00:00.000Z",
+    "transferId": "tr-1002",
+    "transactionStatus": "PENDING"
+  },
+  {
+    "transactionId": "tx-1010",
+    "accountId": "ACT-1002",
+    "recipientAccountId": "ACT-1001",
+    "amount": 100,
+    "description": "Transfer from John Doe",
+    "transactionType": "TRANSFER_IN",
+    "dateCreated": "2026-10-05T14:00:00.000Z",
+    "transferId": "tr-1002",
+    "transactionStatus": "PENDING"
+  },
+  {
+    "transactionId": "tx-1011",
+    "accountId": "ACT-1002",
+    "recipientAccountId": null,
+    "amount": 200,
+    "description": "Check deposit",
+    "transactionType": "DEPOSIT",
+    "dateCreated": "2026-10-06T12:00:00.000Z",
+    "transferId": null,
+    "transactionStatus": "PENDING"
+  }
+]

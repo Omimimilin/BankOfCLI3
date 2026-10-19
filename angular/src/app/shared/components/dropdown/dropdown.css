@@ -1,0 +1,26 @@
+select {
+  border-radius: 0.75rem;
+  padding: 1em 1.25em;
+  font-size: var(--step-0);
+  background: var(--primary-white-80);
+  outline: 2px solid transparent;
+  border-right: 1.25em solid transparent; /* Pad the default chevron */
+  transition:
+    outline 0.3s ease,
+    filter 0.3s ease,
+    color 0.3s ease;
+
+  &:enabled {
+    cursor: pointer;
+    &:hover {
+      outline: 2px solid var(--primary);
+      filter: brightness(1.025);
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    filter: opacity(0.66);
+    color: grey;
+  }
+}
