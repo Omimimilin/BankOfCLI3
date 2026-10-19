@@ -2,6 +2,7 @@ package com.revature.team2.bank3.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.revature.team2.bank3.domain.User;
@@ -12,7 +13,6 @@ import com.revature.team2.bank3.dto.auth.RegisterResponseDto;
 import com.revature.team2.bank3.exceptions.UserNotFoundException;
 import com.revature.team2.bank3.rest.ResponseContract;
 import com.revature.team2.bank3.security.JwtUtil;
-import com.revature.team2.bank3.security.SecurityConfig;
 
 import jakarta.transaction.Transactional;
 
@@ -20,12 +20,12 @@ import jakarta.transaction.Transactional;
 public class AuthService {
     private final UserService userService;
     private final JwtUtil jwtUtil;
-    private final SecurityConfig securityConfig;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public AuthService(UserService userService, JwtUtil jwtUtil, SecurityConfig securityConfig) {
+    public AuthService(UserService userService, JwtUtil jwtUtil, BCryptPasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.jwtUtil = jwtUtil;
-        this.securityConfig = securityConfig;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
@@ -37,8 +37,7 @@ public class AuthService {
         User user = this.userService.createUser(
                 requestDto.username(),
                 requestDto.name(),
-                securityConfig.passwordEncoder()
-                    .encode(requestDto.plainTextPin()));
+                passwordEncoder.encode(requestDto.plainTextPin()));
         var responseDto = new RegisterResponseDto(
                 user.getId(),
                 user.getUsername(),
@@ -50,7 +49,7 @@ public class AuthService {
         try {
             User user = this.userService.getUserByUsername(requestDto.username());
 
-            if (securityConfig.passwordEncoder().matches(
+            if (passwordEncoder.matches(
                  requestDto.plainTextPin(),
                  user.getPin())) {
                 String jwt = jwtUtil.generateToken(user);
