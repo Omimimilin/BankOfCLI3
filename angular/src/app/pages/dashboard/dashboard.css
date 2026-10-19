@@ -1,0 +1,393 @@
+:host ::ng-deep .top-section > app-card > div,
+:host ::ng-deep .analytics-section > app-card > div {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+:host ::ng-deep .top-section > app-card.welcome-card > div {
+  padding: var(--space-2xl);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+:host ::ng-deep app-card.stat-card > div {
+  background-color: rgb(240, 240, 240);
+  border: none;
+  box-shadow: none;
+}
+
+.dashboard {
+  padding: var(--space-xl);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.top-section {
+  display: grid;
+  grid-template-columns: 2fr auto;
+  gap: var(--space-m);
+  align-items: stretch;
+}
+
+/* Welcome */
+
+.date-badge {
+  display: inline-block;
+
+  background: var(--primary-white-80);
+  color: var(--primary);
+
+  padding: 0.5em 1em;
+  border-radius: 6px;
+
+  font-size: var(--step--2);
+  font-weight: 600;
+
+  margin-bottom: var(--space-m);
+}
+
+.welcome-row {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  justify-content: space-between;
+  gap: var(--space-m);
+  width: 100%;
+}
+
+.welcome-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.welcome-card h1 {
+  font-size: var(--step-9);
+  font-weight: 700;
+}
+
+.welcome-card p {
+  color: #777;
+  font-size: var(--step-0);
+  margin-top: var(--space-2xs);
+}
+
+:host ::ng-deep .welcome-row app-button {
+  width: fit-content;
+  flex: 0 0 auto;
+}
+
+:host ::ng-deep .welcome-row app-button button {
+  width: auto;
+}
+
+.transaction-menu {
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  padding: 6px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.transaction-menu a {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-align: left;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.transaction-menu a:hover,
+.transaction-menu a:focus-visible {
+  background: var(--primary-white-80);
+  outline: none;
+}
+
+.new-transaction-button {
+  display: block;
+  width: fit-content;
+}
+
+/* Total Balance */
+
+.balance-card h2 {
+  font-size: var(--step-8);
+  font-weight: 700;
+  margin: var(--space-3xs) 0 var(--space-m);
+}
+
+.balance-label {
+  color: #777;
+  font-size: var(--step-0);
+}
+
+/* Bank card */
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+}
+
+.card-chip {
+  width: 42px;
+  height: 30px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.card-number {
+  font-size: 18px;
+  letter-spacing: 2px;
+}
+
+.card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.card-bottom > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-label {
+  font-size: 9px;
+  opacity: 0.7;
+  letter-spacing: 1px;
+}
+
+.bank-card {
+  width: 360px;
+  height: 220px;
+  box-sizing: border-box;
+
+  margin: 0 auto;
+
+  padding: 24px;
+  border-radius: 18px;
+
+  background: linear-gradient(
+    45deg,
+    oklch(from var(--primary) l c calc(h - 25)),
+    oklch(from var(--primary) l c calc(h + 25))
+  );
+
+  color: white;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Analytics */
+.summary-title {
+  font-size: var(--step-7);
+  font-weight: 700;
+  margin-bottom: var(--space-m);
+}
+
+.analytics-section {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-m);
+  margin-top: var(--space-m);
+  align-items: stretch;
+}
+
+/* Outer This Month card */
+.monthly-summary {
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Holds Income + Spending */
+.income-spending-card {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 150px));
+  gap: var(--space-s);
+
+  justify-content: center;
+}
+
+/* Individual Income / Spending card */
+.stat-card {
+  width: 100%;
+  max-width: 150px;
+
+  aspect-ratio: 1 / 1;
+  border: none;
+  box-shadow: none;
+  border-radius: 20px;
+}
+
+/* Income / Spending + icon */
+.stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stat-header p {
+  color: #666;
+  font-size: var(--step-1);
+  font-weight: 500;
+}
+
+/* Circle around icon */
+.stat-icon {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #dedede;
+  color: black;
+
+  font-weight: 700;
+}
+
+/* Amount + percentage */
+.stat-bottom {
+  margin-top: var(--space-m);
+}
+
+.stat-bottom h2 {
+  font-size: var(--step-5);
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+}
+
+/* Percentage pills */
+.change {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 999px;
+
+  font-size: var(--step--1);
+  font-weight: 500;
+}
+
+.change.positive {
+  background: #dcf5d7;
+  color: #42a535;
+}
+
+.change.negative {
+  background: #f8dada;
+  color: #d83232;
+}
+
+/* Balance History Text*/
+.balance-text {
+  font-size: var(--step-7);
+  font-weight: 700;
+  margin-bottom: var(--space-s);
+}
+
+/* Chart */
+.balance-history-card {
+  min-width: 0;
+  min-height: 300px;
+}
+
+.chart {
+  position: relative;
+  height: 250px;
+  width: 100%;
+}
+
+.chart {
+  position: relative;
+  height: 250px;
+  width: 100%;
+}
+
+.transactions-section {
+  margin-top: var(--space-m);
+}
+
+/* Transaction History Section */
+.transaction-history-section {
+  display: grid;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+  .top-section,
+  .analytics-section {
+    grid-template-columns: 1fr;
+  }
+
+  .monthly-summary {
+    width: 100%;
+    max-width: none;
+  }
+
+  .income-spending-card {
+    grid-template-columns: repeat(2, minmax(0, 150px));
+    justify-content: center;
+  }
+
+  .balance-history-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .welcome-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard {
+    padding: var(--space-m);
+  }
+
+  .balance-card {
+    min-width: 0;
+  }
+
+  .bank-card {
+    width: 100%;
+    max-width: 360px;
+  }
+}
+/* make transactions menu */
+.transaction-menu {
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  padding: 6px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.transaction-menu button {
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.transaction-menu button:hover,
+.transaction-menu button:focus-visible {
+  background: var(--primary-white-80);
+  outline: none;
+}
