@@ -4,8 +4,11 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.revature.team2.bank3.domain.Transaction;
 import com.revature.team2.bank3.domain.User;
@@ -13,9 +16,6 @@ import com.revature.team2.bank3.exceptions.InsufficientFundsException;
 import com.revature.team2.bank3.exceptions.InvalidAmountException;
 import com.revature.team2.bank3.exceptions.SelfTransferNotAllowedException;
 import com.revature.team2.bank3.repository.TransactionRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TransactionService {
