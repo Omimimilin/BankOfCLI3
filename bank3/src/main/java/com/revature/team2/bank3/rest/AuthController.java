@@ -25,7 +25,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Authentication", description = "Endpoints for user registration and login")
 @RestController
-@CrossOrigin(origins = "*") // TODO: setup CORS correctly
 @RequestMapping("/api/auth")
 public class AuthController {
 

@@ -2,6 +2,7 @@ package com.revature.team2.bank3.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.revature.team2.bank3.domain.User;
@@ -19,10 +20,12 @@ import jakarta.transaction.Transactional;
 public class AuthService {
     private final UserService userService;
     private final JwtUtil jwtUtil;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public AuthService(UserService userService, JwtUtil jwtUtil) {
+    public AuthService(UserService userService, JwtUtil jwtUtil, BCryptPasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.jwtUtil = jwtUtil;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
@@ -34,7 +37,7 @@ public class AuthService {
         User user = this.userService.createUser(
                 requestDto.username(),
                 requestDto.name(),
-                requestDto.plainTextPin()); // TODO: Hash the pin
+                passwordEncoder.encode(requestDto.plainTextPin()));
         var responseDto = new RegisterResponseDto(
                 user.getId(),
                 user.getUsername(),
@@ -46,9 +49,9 @@ public class AuthService {
         try {
             User user = this.userService.getUserByUsername(requestDto.username());
 
-            String hashedPin = requestDto.plainTextPin(); // TODO: Hash the pin
-
-            if (user.getPin().equals(hashedPin)) {
+            if (passwordEncoder.matches(
+                 requestDto.plainTextPin(),
+                 user.getPin())) {
                 String jwt = jwtUtil.generateToken(user);
                 LoginResponseDto responseDto = new LoginResponseDto(
                         user.getId(),
