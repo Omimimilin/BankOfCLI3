@@ -35,5 +35,5 @@ export const routes: Routes = [
   },
   { path: 'docs', component: Docs },
   { path: 'not-found', component: NotFound },
-  { path: '**', redirectTo: 'not-found' }, // must stay last
+  { path: '**', redirectTo: 'not-found' },
 ];

@@ -8,7 +8,7 @@
       </span>
       <div class="welcome-row">
         <div class="welcome-copy">
-          <h1>Welcome back, {{ account()?.accountName | titlecase }}.</h1>
+          <h1>Welcome back, {{ accountName() | titlecase }}.</h1>
           <p>Stay on top of your account activity and transactions.</p>
         </div>
         <app-button
@@ -35,7 +35,7 @@
     <!-- Total Balance -->
     <app-card class="balance-card" [loading]="isLoading()">
       <p class="balance-label no-skeleton">Total Balance</p>
-      <h2>${{ account()?.balance?.toFixed(2) }}</h2>
+      <h2>${{ balance().toFixed(2) }}</h2>
       <mat-card class="bank-card">
         <div class="card-top">
           <span class="no-skeleton">BANK OF CLI</span>
@@ -48,7 +48,7 @@
         <div class="card-bottom">
           <div>
             <span class="card-label no-skeleton">CARD HOLDER</span>
-            <pre>{{ account()?.accountName | titlecase }}</pre>
+            <pre>{{ accountName() | titlecase }}</pre>
           </div>
           <div>
             <span class="card-label no-skeleton">EXPIRES</span>
