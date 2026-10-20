@@ -9,9 +9,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseContract<T> {
-    private boolean success;
-    private T data;
-    private List<String> errors;
+    private final boolean success;
+    private final T data;
+    private final List<String> errors;
 
     private ResponseContract(boolean success, T data, List<String> errors) {
         this.success = success;

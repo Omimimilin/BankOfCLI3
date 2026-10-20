@@ -35,8 +35,8 @@ public class User {
     @Schema(description = "The user's full name", example = "John Doe")
     private String name;
 
-    @Size(max = 20)
-    @Column(name = "pin", length = 20)
+    @Size(max = 60)
+    @Column(name = "pin", length = 60)
     @Schema(description = "The user's PIN", example = "1234")
     private String pin;
 

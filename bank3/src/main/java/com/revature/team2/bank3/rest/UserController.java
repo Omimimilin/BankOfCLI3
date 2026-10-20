@@ -2,7 +2,6 @@ package com.revature.team2.bank3.rest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,13 +19,12 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@CrossOrigin(origins = "*") // TODO: setup CORS correctly
 @RequestMapping("/api/users")
 @Tag(name = "Users", description = "Operations for managing users")
 public class UserController {
 
-     private UserService userService;
-     private JwtUtil jwtUtil;
+     private final UserService userService;
+     private final JwtUtil jwtUtil;
 
      public UserController(UserService userService, JwtUtil jwtUtil) {
           this.userService = userService;

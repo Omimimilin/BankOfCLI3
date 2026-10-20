@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.revature.team2.bank3.domain.User;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
