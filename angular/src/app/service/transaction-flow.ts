@@ -45,8 +45,8 @@ export class TransactionFlow {
       if (!next) return;
 
       if (transactionType === TransactionType.TransferOut) {
-        tx.recipientAccountId = (tx.recipientAccountId ?? '').trim().toUpperCase();
-        if (!this.bank.getAccount(tx.recipientAccountId)) {
+        tx.recipientAccountId = (tx.recipientAccountId ?? '').trim();
+        if (!(await this.bank.userExists(tx.recipientAccountId))) {
           await this.showError('Destination account not found');
           continue;
         }
@@ -61,7 +61,7 @@ export class TransactionFlow {
       if (!confirmed) continue;
 
       if (!(await this.showLoading(3000))) continue;
-      const error = this.send(tx);
+      const error = await this.send(tx);
       if (error) {
         await this.showError(error);
         continue;
@@ -76,7 +76,7 @@ export class TransactionFlow {
   }
 
   // BankService validates, creates and stores the record; returns '' on success.
-  private send(tx: Transaction): string {
+  private async send(tx: Transaction): Promise<string> {
     const note = tx.description ?? '';
     switch (tx.transactionType) {
       case TransactionType.Deposit:
