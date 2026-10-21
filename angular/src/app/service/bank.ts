@@ -1,9 +1,33 @@
 import { Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Account } from '../models/Account.model';
 import { Transaction } from '../models/Transaction.model';
 import { TransactionStatus } from '../models/TransactionStatus.model';
 import { TransactionType } from '../models/TransactionType.model';
+import { firstValueFrom } from 'rxjs';
+
+
+interface ResponseContract<T> {
+  success: boolean;
+  data: T | null;
+  errors: string[] | null;
+}
+
+interface ApiUser {
+  accountId: number;
+  username: string;
+  name: string;
+  balance: number;
+}
+
+interface ApiTransaction {
+  id: number;
+  amount: number;
+  transferType: string;
+  timestamp: string;
+  sourceUsername: string;
+  destinationUsername: string | null;
+}
 
 interface AccountRecord {
   accountId: string;
@@ -27,6 +51,7 @@ interface TransactionRecord {
 
 @Injectable({ providedIn: 'root' })
 export class BankService {
+  private readonly apiUrl = 'http://localhost:8081';
   private readonly accountIdKey = 'currentAccountId';
   private readonly accountsKey = 'bankAccounts';
   private readonly transactionsKey = 'bankTransactions';
@@ -48,16 +73,40 @@ export class BankService {
   }
 
   loadFromFile(): void {
-    this.http.get<AccountRecord[]>('accounts.json').subscribe((accounts) => {
-      this.load(accounts);
-      this.restoreAccounts();
-      this.accountsLoaded.set(true);
+    this.loadMe();
+  }
 
-      this.http.get<TransactionRecord[]>('transaction-records.json').subscribe((records) => {
-        this.loadTransactions(records);
-        this.restoreTransactions();
+  loadMe(): void {
+    const token = localStorage.getItem('jwt');
+
+    this.http.get<ResponseContract<ApiUser>>(`${this.apiUrl}/api/users/me`, {
+      headers: token ? { Authorization: `Bearer ${token}`} : {},
+    }).subscribe({
+      next: (response) => {
+        const user = response.data;
+        if(!response.success || !user) {
+          this.accountsLoaded.set(true);
+          this.transactionsLoaded.set(true);
+          return;
+        }
+        const record: AccountRecord = {
+          accountId: user.username,
+          accountPin: '',
+          accountName: user.name,
+          balance: Number(user.balance),
+          dateCreated: new Date().toISOString(),
+        };
+
+        this.accounts.set(record.accountId, record);
+        this.currentAccountId.set(record.accountId);
+        this.accountsLoaded.set(true);
+        this.touch();
+        this.loadHistory();
+      },
+      error: () => {
+        this.accountsLoaded.set(true);
         this.transactionsLoaded.set(true);
-      });
+      },
     });
   }
 
@@ -115,98 +164,171 @@ export class BankService {
     return '';
   }
 
-  deposit(amount: number, description: string): string {
-    const accountId = this.currentAccountId();
-    if (!accountId) return 'You are not signed in.';
+  async deposit(amount: number, _description: string): Promise<string> {
+    const username = this.currentAccountId();
+    if (!username) return 'You are not signed in.';
     const error = this.checkAmount(amount);
     if (error) return error;
 
-    this.addTransaction({
-      transactionId: this.nextId('tx'),
-      accountId,
-      recipientAccountId: null,
-      amount,
-      description: description.trim() || null,
-      transactionType: TransactionType.Deposit,
-      dateCreated: new Date().toISOString(),
-      transferId: null,
-      transactionStatus: TransactionStatus.Approved,
-    });
-    this.changeBalance(accountId, amount);
-    this.touch();
-    return '';
-  }
+    const token = localStorage.getItem('jwt');
 
-  withdraw(amount: number, description: string): string {
-    const accountId = this.currentAccountId();
-    if (!accountId) return 'You are not signed in.';
-    const error = this.checkAmount(amount);
-    if (error) return error;
-
-    const account = this.accounts.get(accountId);
-    if (!account || amount > account.balance) {
-      return 'Insufficient funds.';
+    try {
+      await firstValueFrom(
+        this.http.post(`${this.apiUrl}/api/transactions/deposit`, {
+          username,
+          amount,
+        }, {
+          headers: token ? { Authorization: `Bearer ${token}`} : {},
+          }),
+      );
+    } catch (error) {
+      return this.readError(error, 'Deposit failed.');
     }
 
-    this.addTransaction({
-      transactionId: this.nextId('tx'),
-      accountId,
-      recipientAccountId: null,
-      amount,
-      description: description.trim() || null,
-      transactionType: TransactionType.Withdraw,
-      dateCreated: new Date().toISOString(),
-      transferId: null,
-      transactionStatus: TransactionStatus.Approved,
-    });
-    this.changeBalance(accountId, -amount);
+    this.changeBalance(username, amount);
     this.touch();
+    this.loadHistory();
     return '';
   }
 
-  transfer(amount: number, recipientAccountId: string, description: string): string {
-    const accountId = this.currentAccountId();
-    if (!accountId) return 'You are not signed in.';
+
+  private readError(error: unknown, fallback: string): string {
+    if (error instanceof HttpErrorResponse) {
+      const body = error.error as ResponseContract<unknown> | undefined;
+      return body?.errors?.[0] ?? fallback;
+    }
+    return fallback;
+  }
+
+  async withdraw(amount: number, _description: string): Promise<string> {
+    const username= this.currentAccountId();
+    if (!username) return 'You are not signed in.';
     const error = this.checkAmount(amount);
     if (error) return error;
 
-    const recipientId = recipientAccountId.trim().toUpperCase();
-    if (!this.accounts.has(recipientId)) return 'Destination account not found.';
-    if (recipientId === accountId) return 'You cannot transfer to the same account.';
-
-    const account = this.accounts.get(accountId);
-    if (!account || amount > account.balance) return 'Insufficient funds.';
-
-    const when = new Date().toISOString();
-    const transferId = this.nextId('tr');
-    const note = description.trim() || null;
-
-    this.addTransaction({
-      transactionId: this.nextId('tx'),
-      accountId,
-      recipientAccountId: recipientId,
-      amount,
-      description: note,
-      transactionType: TransactionType.TransferOut,
-      dateCreated: when,
-      transferId,
-      transactionStatus: TransactionStatus.Approved,
-    });
-    this.addTransaction({
-      transactionId: this.nextId('tx'),
-      accountId: recipientId,
-      recipientAccountId: accountId,
-      amount,
-      description: note,
-      transactionType: TransactionType.TransferIn,
-      dateCreated: when,
-      transferId,
-      transactionStatus: TransactionStatus.Approved,
-    });
-    this.changeBalance(accountId, -amount);
-    this.changeBalance(recipientId, amount);
+    const token = localStorage.getItem('jwt');
+    try {
+      await firstValueFrom(
+        this.http.post(`${this.apiUrl}/api/transactions/withdraw`, {
+          username,
+          amount,
+        }, {
+          headers: token ? { Authorization: `Bearer ${token}`} : {},
+        })
+      );
+    } catch (error) {
+      return this.readError(error, 'Withdrawal failed.');
+    }
+    this.changeBalance(username, -amount);
     this.touch();
+    this.loadHistory();
     return '';
+  }
+
+  async transfer(amount: number, recipientAccountId: string, _description: string): Promise<string> {
+    const username = this.currentAccountId();
+    if (!username) return 'You are not signed in.';
+    const error = this.checkAmount(amount);
+    if (error) return error;
+
+    const destinationUsername = recipientAccountId.trim();
+    if (!destinationUsername) return 'Destination account not found.';
+    if(destinationUsername === username) return 'You cannot transfer to the same account.';
+    
+    const token = localStorage.getItem('jwt');
+    try {
+      await firstValueFrom(
+        this.http.post(`${this.apiUrl}/api/transactions/transfer`, {
+          username,
+          destinationUsername,
+          amount,
+        }, {
+          headers: token ? { Authorization: `Bearer ${token}`} : {},
+        })
+      )
+    } catch (error) {
+      return this.readError(error, 'Transfer failed.');
+    }
+    this.changeBalance(username, -amount);
+    this.touch();
+    this.loadHistory();
+    return '';
+  }
+
+  async userExists(username: string): Promise<boolean> {
+    const name = username.trim();
+    if (!name) return false;
+    const token = localStorage.getItem('jwt');
+    try {
+      const response = await firstValueFrom(
+        this.http.get<ResponseContract<ApiUser>>(`${this.apiUrl}/api/users`, {
+          params: { username: name },
+          headers: token ? { Authorization: `Bearer ${token}`} : {},
+        }),
+      );
+      return response.success && !!response.data;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  loadHistory(): void {
+    const username = this.currentAccountId();
+    const token = localStorage.getItem('jwt');
+    if (!username) {
+      this.transactionsLoaded.set(true);
+      return;
+    }
+
+    this.http
+      .get<ApiTransaction[]>(`${this.apiUrl}/api/transactions`, {
+        params: { username },
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      })
+      .subscribe({
+        next: (rows) => {
+          this.loadTransactions(rows.map((row) => this.toRecord(username, row)));
+          this.transactionsLoaded.set(true);
+          this.touch();
+        },
+        error: () => {
+          this.transactionsLoaded.set(true);
+        },
+      });
+  }
+
+  private toRecord(username: string, row: ApiTransaction): TransactionRecord {
+    const other =
+      row.destinationUsername && row.destinationUsername !== username
+        ? row.destinationUsername
+        : row.sourceUsername !== username
+          ? row.sourceUsername
+          : null;
+
+    return {
+      transactionId: String(row.id),
+      accountId: username,
+      recipientAccountId: other,
+      amount: Number(row.amount),
+      description: null,
+      transactionType: this.toType(row.transferType),
+      dateCreated: new Date(row.timestamp).toISOString(),
+      transferId: null,
+      transactionStatus: TransactionStatus.Approved,
+    };
+  }
+
+  private toType(transferType: string): TransactionType {
+    switch (transferType) {
+      case 'deposit':
+        return TransactionType.Deposit;
+      case 'withdraw':
+        return TransactionType.Withdraw;
+      case 'transfer_in':
+        return TransactionType.TransferIn;
+      default:
+        return TransactionType.TransferOut;
+    }
   }
 
   private loadTransactions(records: TransactionRecord[]): void {
