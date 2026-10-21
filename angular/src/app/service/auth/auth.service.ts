@@ -1,69 +1,100 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
-import { tap } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { firstValueFrom, Observable } from 'rxjs';
+import { ApiResponse } from '../../models/dto/ApiResponse';
+import {
+  LoginRequestDto,
+  LoginResponseDto,
+  RegisterRequestDto,
+  RegisterResponseDto,
+} from '../../models/dto/auth/AuthDtos';
+import { UserResponseDto } from '../../models/dto/user/UserDtos';
 
-import { SignJWT, jwtVerify } from 'jose';
+@Injectable({
+  providedIn: 'root',
+})
+export abstract class ApiService {
+  public readonly http = inject(HttpClient);
+  public readonly API_BASE = 'http://localhost:8080/api';
 
-const SECRET_KEY = 'a-super-secret-key-that-is-at-least-256-bits-long';
-const secretKey = new TextEncoder().encode(SECRET_KEY);
+  public async handleRequest<T>(
+    request$: Observable<ApiResponse<T>>,
+    expectedErrorStatuses: number[] = [],
+  ): Promise<ApiResponse<T>> {
+    try {
+      const body = await firstValueFrom(request$);
 
-type ValidAuth<T> = { isValid: true; payload: T };
-type ErrorAuth = { isValid: false; errors: string[] };
-type AuthResult<T> = Promise<ValidAuth<T> | ErrorAuth>;
+      if (body.success) {
+        return body;
+      } else {
+        throw new Error("Something went wrong in the server. This shouldn't have happened.");
+      }
+    } catch (error) {
+      if (error instanceof HttpErrorResponse) {
+        if (expectedErrorStatuses.includes(error.status)) {
+          return error.error;
+        } else if (error.status === 0) {
+          return {
+            success: false,
+            errors: ['Unable to connect to the server. Please check if the backend is running.'],
+          };
+        }
+      }
 
-type JwtPayload = {
-  accountId: string;
-};
+      console.error(error);
+
+      return {
+        success: false,
+        errors: ['An unexpected error occurred. Please try again.'],
+      };
+    }
+  }
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  // private http = inject(HttpClient);
-  // private apiUrl = 'https://api.yourdomain.com/auth';
+  public readonly http = inject(HttpClient);
+  private readonly apiService = inject(ApiService);
+  private readonly loginUrl = `${this.apiService.API_BASE}/auth/login`;
+  private readonly registerUrl = `${this.apiService.API_BASE}/auth/register`;
+  private readonly meUrl = `${this.apiService.API_BASE}/users/me`;
+  public readonly ARTIFICIAL_DELAY_MS = 1500;
 
-  private createToken = async (payload: JwtPayload) =>
-    await new SignJWT(payload)
-      .setProtectedHeader({ alg: 'HS256' })
-      .setIssuedAt()
-      .setExpirationTime('30d')
-      .sign(secretKey);
-
-  private async verifyToken(token: string): AuthResult<JwtPayload> {
-    try {
-      const { payload }: { payload: JwtPayload } = await jwtVerify(token, secretKey, {
-        algorithms: ['HS256'],
-      });
-      return { isValid: true, payload };
-    } catch (error) {
-      // If expired, signature is invalid, or malformed
-      return { isValid: false, errors: [(error as Error).message] };
+  public async login(dto: LoginRequestDto): Promise<ApiResponse<LoginResponseDto>> {
+    await new Promise((resolve) => setTimeout(resolve, this.ARTIFICIAL_DELAY_MS));
+    const request$ = this.http.post<ApiResponse<LoginResponseDto>>(this.loginUrl, dto);
+    const response = await this.apiService.handleRequest(request$, [401]);
+    if (response.success) {
+      localStorage.setItem('jwt', response.data.accessToken);
     }
+    return response;
   }
 
-  public async login(credentials: JwtPayload): Promise<void> {
-    // return this.http.post<{ token: string }>(`${this.apiUrl}/login`, credentials).pipe(
-    //   tap(response => {
-    //     // Save the JWT in localStorage (or sessionStorage)
-    //     localStorage.setItem('jwt', response.token);
-    //   })
-    // );
-
-    const token = await this.createToken(credentials);
-    localStorage.setItem('jwt', token);
+  public async register(dto: RegisterRequestDto): Promise<ApiResponse<RegisterResponseDto>> {
+    await new Promise((resolve) => setTimeout(resolve, this.ARTIFICIAL_DELAY_MS));
+    const request$ = this.http.post<ApiResponse<RegisterResponseDto>>(this.registerUrl, dto);
+    const response = await this.apiService.handleRequest(request$, [400, 409]);
+    return response;
   }
 
   public logout(): void {
     localStorage.removeItem('jwt');
   }
 
-  public async getCurrentUser(): Promise<AuthResult<JwtPayload>> {
-    const token = localStorage.getItem('jwt') ?? '';
-    return this.verifyToken(token);
+  public async getAccount(): Promise<UserResponseDto | null> {
+    const request$ = this.http.get<ApiResponse<UserResponseDto>>(this.meUrl);
+    const response = await this.apiService.handleRequest(request$);
+    if (response.success) {
+      return response.data;
+    } else {
+      return null;
+    }
   }
 
   public async isLoggedIn(): Promise<boolean> {
-    const currentUser = await this.getCurrentUser();
-    return currentUser.isValid;
+    const userDetails = await this.getAccount();
+    return !!userDetails;
   }
 }

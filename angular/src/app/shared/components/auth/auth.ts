@@ -9,10 +9,9 @@ export type AuthFields = { name: string; label: string; type: InputType; placeho
 
 export type FormEntries = Record<string, FormDataEntryValue>;
 
-export type ActionResult<T = void> = Promise<
+export type ActionResult = Promise<
   | {
       success: true;
-      // data?: T;
       redirect: string;
       toast?: string;
     }
@@ -22,7 +21,7 @@ export type ActionResult<T = void> = Promise<
     }
 >;
 
-export type AuthCallback = <T>(formEntries: FormEntries) => ActionResult<T>;
+export type AuthCallback = (formEntries: FormEntries) => ActionResult;
 
 @Component({
   imports: [RouterLink, Button, Input, ToastContainer],
@@ -61,7 +60,7 @@ export class Auth {
     try {
       const formElement = e.currentTarget as HTMLFormElement;
       const formValues: FormEntries = Object.fromEntries(new FormData(formElement).entries());
-      const result = await this.callback()<'Generic Here'>(formValues);
+      const result = await this.callback()(formValues);
 
       if (!result.success) {
         const errorMessage =
@@ -82,6 +81,7 @@ export class Auth {
       }
     } catch (err) {
       this.errorText.set('An unexpected error occurred.');
+      console.error(err);
     } finally {
       this.isLoading.set(false);
     }

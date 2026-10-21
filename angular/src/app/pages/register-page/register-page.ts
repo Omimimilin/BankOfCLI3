@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { AuthService } from '../../service/auth/auth.service';
 import { BankService } from '../../service/bank';
 import { AuthPage } from '../../shared/components/auth-page/auth-page';
 import {
@@ -15,7 +16,8 @@ import {
   templateUrl: './register-page.html',
 })
 export class RegisterPage {
-  private readonly bank = inject(BankService);
+  private readonly authService = inject(AuthService);
+
   readonly heading = 'Register Account';
   readonly description =
     'Get started with a new account. Fill in your details below to set up your secure account dashboard.';
@@ -25,16 +27,16 @@ export class RegisterPage {
   readonly footerActionLink = '/login';
   readonly fields: AuthFields = [
     {
-      name: 'accountId',
-      label: 'Account ID',
+      name: 'username',
+      label: 'Username',
       type: 'text',
-      placeholder: 'ACT-1001',
+      placeholder: 'superman',
     },
     {
-      name: 'nickname',
+      name: 'name',
       label: 'Account Nickname',
       type: 'text',
-      placeholder: 'Superman',
+      placeholder: 'Clark Kent',
     },
     {
       name: 'accountPin',
@@ -43,26 +45,23 @@ export class RegisterPage {
       placeholder: '••••',
     },
   ];
-  readonly callback: AuthCallback = async <T>(formEntries: FormEntries): ActionResult<T> => {
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+  readonly callback: AuthCallback = async (formEntries: FormEntries): ActionResult => {
+    const username = String(formEntries['username'] ?? '');
+    const name = String(formEntries['name'] ?? '');
+    const plainTextPin = String(formEntries['accountPin'] ?? '');
+    const result = await this.authService.register({ username, name, plainTextPin });
 
-    const error = this.bank.register(
-      String(formEntries['accountId'] ?? ''),
-      String(formEntries['accountPin'] ?? ''),
-      String(formEntries['nickname'] ?? ''),
-    );
-
-    if (error) {
+    if (result.success) {
+      return {
+        success: true,
+        toast: 'Registration successful! You will be redirected to the login page in 3s.',
+        redirect: '/login',
+      };
+    } else {
       return {
         success: false,
-        errors: [error],
+        errors: result.errors,
       };
     }
-
-    return {
-      success: true,
-      toast: 'Registration successful! You will be redirected to the login page in 3s.',
-      redirect: '/login',
-    };
   };
 }
