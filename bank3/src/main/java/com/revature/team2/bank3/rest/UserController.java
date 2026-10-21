@@ -16,10 +16,12 @@ import com.revature.team2.bank3.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/users")
+@SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Users", description = "Operations for managing users")
 public class UserController {
 
