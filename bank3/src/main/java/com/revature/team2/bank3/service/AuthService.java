@@ -49,21 +49,16 @@ public class AuthService {
         try {
             User user = this.userService.getUserByUsername(requestDto.username());
 
-            if (passwordEncoder.matches(
-                 requestDto.plainTextPin(),
-                 user.getPin())) {
-                String jwt = jwtUtil.generateToken(user);
-                LoginResponseDto responseDto = new LoginResponseDto(
-                        user.getId(),
-                        user.getUsername(),
-                        jwt);
-                return ResponseContract.success(HttpStatus.CREATED, responseDto);
-            } else {
+            if (!passwordEncoder.matches(requestDto.plainTextPin(), user.getPin())) {
                 return ResponseContract.error(HttpStatus.UNAUTHORIZED, "Invalid credentials. Please try again.");
             }
+
+            String jwt = jwtUtil.generateToken(user);
+            LoginResponseDto responseDto = new LoginResponseDto(user.getId(), user.getUsername(), jwt);
+            return ResponseContract.success(HttpStatus.OK, responseDto);
+
         } catch (UserNotFoundException e) {
             return ResponseContract.error(HttpStatus.UNAUTHORIZED, "Invalid credentials. Please try again.");
         }
-
     }
 }

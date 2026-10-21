@@ -2,9 +2,6 @@
   display: block;
 }
 
-/* In the components layer so Tailwind utilities passed via `class` can override these defaults. */
-
-/* @layer components { */
 @keyframes l7 {
   33% {
     background-size:
@@ -35,8 +32,8 @@
     left: 50%;
     transform: translate(-50%, -50%);
 
-    width: 2rem;
-    aspect-ratio: 4;
+    width: 2.25rem;
+    aspect-ratio: 5;
     --_g: no-repeat radial-gradient(circle closest-side, #fff 90%, #0000);
     background:
       var(--_g) 0% 50%,
@@ -80,4 +77,3 @@
     color: transparent;
   }
 }
-/* } */

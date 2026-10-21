@@ -193,25 +193,41 @@ html[data-theme='dark'] {
 
 /* Fade between themes */
 html.theme-transition[data-theme='dark'] {
-  animation: theme-to-dark 500ms linear;
+  animation: theme-to-dark 0.3s ease;
 }
 
 html.theme-transition[data-theme='light'] {
-  animation: theme-to-light 500ms linear;
+  animation: theme-to-light 0.3s ease;
 }
 
 @keyframes theme-to-dark {
-  0% { filter: invert(0) hue-rotate(0deg); }
-  50% { filter: invert(0.5) hue-rotate(0deg); }
-  50.01% { filter: invert(0.5) hue-rotate(180deg); }
-  100% { filter: invert(1) hue-rotate(180deg); }
+  0% {
+    filter: invert(0) hue-rotate(0deg);
+  }
+  50% {
+    filter: invert(0.5) hue-rotate(0deg);
+  }
+  50.01% {
+    filter: invert(0.5) hue-rotate(180deg);
+  }
+  100% {
+    filter: invert(1) hue-rotate(180deg);
+  }
 }
 
 @keyframes theme-to-light {
-  0% { filter: invert(1) hue-rotate(180deg); }
-  50% { filter: invert(0.5) hue-rotate(180deg); }
-  50.01% { filter: invert(0.5) hue-rotate(0deg); }
-  100% { filter: invert(0) hue-rotate(0deg); }
+  0% {
+    filter: invert(1) hue-rotate(180deg);
+  }
+  50% {
+    filter: invert(0.5) hue-rotate(180deg);
+  }
+  50.01% {
+    filter: invert(0.5) hue-rotate(0deg);
+  }
+  100% {
+    filter: invert(0) hue-rotate(0deg);
+  }
 }
 
 /* Dark mode for pop ups */

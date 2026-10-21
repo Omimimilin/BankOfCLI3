@@ -16,6 +16,7 @@ import com.revature.team2.bank3.domain.Transaction;
 import com.revature.team2.bank3.dto.transaction.TransactionResponseDto;
 import com.revature.team2.bank3.service.TransactionService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
@@ -23,6 +24,7 @@ import jakarta.validation.constraints.NotNull;
 
 @RestController
 @RequestMapping("/api/transactions")
+@SecurityRequirement(name = "bearerAuth")
 public class TransactionController {
 
     // Add Transaction Service Here
@@ -34,13 +36,15 @@ public class TransactionController {
 
     // records for transactions
     public record TransactionRequest(
-        @NotBlank String username,
-        @NotNull @DecimalMin("0.01") BigDecimal amount) {}
+            @NotBlank String username,
+            @NotNull @DecimalMin("0.01") BigDecimal amount) {
+    }
 
     public record TransferRequest(
             @NotBlank String username,
             @NotBlank String destinationUsername,
-            @NotNull @DecimalMin("0.01") BigDecimal amount) {}
+            @NotNull @DecimalMin("0.01") BigDecimal amount) {
+    }
 
     // Deposit
     @PostMapping("/deposit")

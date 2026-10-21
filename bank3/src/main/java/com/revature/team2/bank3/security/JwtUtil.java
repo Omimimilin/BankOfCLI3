@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.revature.team2.bank3.domain.User;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
@@ -16,7 +17,6 @@ import io.jsonwebtoken.security.Keys;
 public class JwtUtil {
     private final SecretKey key;
 
-    // Spring will automatically inject the property into the constructor parameter
     public JwtUtil(@Value("${app.jwt.secret}") String secret) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }

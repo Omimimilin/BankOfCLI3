@@ -18,7 +18,7 @@ import { AuthService } from '../../service/auth/auth.service';
 })
 export class LoginPage {
   private readonly authService = inject(AuthService);
-  private readonly bank = inject(BankService);
+
   readonly heading = 'Account Login';
   readonly description =
     'Welcome back! Please enter your login credentials to access your secure account dashboard.';
@@ -28,8 +28,8 @@ export class LoginPage {
   readonly footerActionLink = '/register';
   readonly fields: AuthFields = [
     {
-      name: 'accountId',
-      label: 'Account ID',
+      name: 'username',
+      label: 'Username',
       type: 'text',
     },
     {
@@ -39,25 +39,21 @@ export class LoginPage {
     },
   ];
 
-  readonly callback: AuthCallback = async <T>(formEntries: FormEntries): ActionResult<T> => {
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+  readonly callback: AuthCallback = async (formEntries: FormEntries): ActionResult => {
+    const username = String(formEntries['username'] ?? '');
+    const plainTextPin = String(formEntries['accountPin'] ?? '');
+    const result = await this.authService.login({ username, plainTextPin });
 
-    const accountId = String(formEntries['accountId'] ?? '');
-    const accountPin = String(formEntries['accountPin'] ?? '');
-    const error = this.bank.login(accountId, accountPin);
-
-    if (error) {
+    if (result.success) {
+      return {
+        success: true,
+        redirect: '/dashboard',
+      };
+    } else {
       return {
         success: false,
-        errors: [error],
+        errors: result.errors,
       };
     }
-
-    await this.authService.login({ accountId });
-
-    return {
-      success: true,
-      redirect: '/dashboard',
-    };
   };
 }
