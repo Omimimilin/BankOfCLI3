@@ -19,15 +19,12 @@ import { TitleCasePipe } from '@angular/common';
 
 import Chart from 'chart.js/auto';
 
-import { toSignal } from '@angular/core/rxjs-interop';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { matMoneyBagFillOutline, matSavingsFillOutline } from '@ng-icons/material-symbols/outline';
 import { matAddCircleRound } from '@ng-icons/material-symbols/round';
-import { from } from 'rxjs';
 import { Transaction } from '../../models/Transaction.model';
 import { TransactionStatus } from '../../models/TransactionStatus.model';
 import { TransactionType } from '../../models/TransactionType.model';
-import { AuthService } from '../../service/auth/auth.service';
 import { BankService } from '../../service/bank';
 import { TransactionFlow } from '../../service/transaction-flow';
 
@@ -58,7 +55,6 @@ import { TransactionFlow } from '../../service/transaction-flow';
   host: { '(document:keydown.enter)': 'stopLoading()' },
 })
 export class Dashboard implements AfterViewInit {
-  private readonly authService = inject(AuthService);
   private readonly bank = inject(BankService);
   private readonly flow = inject(TransactionFlow);
   protected readonly types = TransactionType;
@@ -76,11 +72,14 @@ export class Dashboard implements AfterViewInit {
   expirationDate = '08/30';
   currentDate = new Date();
 
-  protected readonly account = toSignal(from(this.authService.getAccount()), {
-    initialValue: null,
+  // BankService reloads GET /api/users/me after each transaction and bumps revision.
+  protected readonly account = computed(() => {
+    this.bank.revision();
+    const id = this.bank.currentAccountId();
+    return id ? (this.bank.getAccount(id) ?? null) : null;
   });
   protected readonly balance = computed(() => this.account()?.balance || 0);
-  protected readonly accountName = computed(() => this.account()?.name || 'User');
+  protected readonly accountName = computed(() => this.account()?.accountName || 'User');
 
   protected readonly monthSummary = computed(() => {
     const current = this.monthTotals(0);
@@ -133,6 +132,7 @@ export class Dashboard implements AfterViewInit {
   }
 
   constructor() {
+    void this.bank.loadMe();
     inject(DestroyRef).onDestroy(() => {
       this.chart?.destroy();
       clearTimeout(this.loadingTimer);

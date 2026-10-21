@@ -51,7 +51,7 @@ interface TransactionRecord {
 
 @Injectable({ providedIn: 'root' })
 export class BankService {
-  private readonly apiUrl = 'http://localhost:8081';
+  private readonly apiUrl = 'http://localhost:8080';
   private readonly accountIdKey = 'currentAccountId';
   private readonly accountsKey = 'bankAccounts';
   private readonly transactionsKey = 'bankTransactions';
@@ -76,15 +76,17 @@ export class BankService {
     this.loadMe();
   }
 
-  loadMe(): void {
+  loadMe(): Promise<void> {
     const token = localStorage.getItem('jwt');
 
-    this.http.get<ResponseContract<ApiUser>>(`${this.apiUrl}/api/users/me`, {
-      headers: token ? { Authorization: `Bearer ${token}`} : {},
-    }).subscribe({
-      next: (response) => {
+    return firstValueFrom(
+      this.http.get<ResponseContract<ApiUser>>(`${this.apiUrl}/api/users/me`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      }),
+    )
+      .then((response) => {
         const user = response.data;
-        if(!response.success || !user) {
+        if (!response.success || !user) {
           this.accountsLoaded.set(true);
           this.transactionsLoaded.set(true);
           return;
@@ -102,12 +104,11 @@ export class BankService {
         this.accountsLoaded.set(true);
         this.touch();
         this.loadHistory();
-      },
-      error: () => {
+      })
+      .catch(() => {
         this.accountsLoaded.set(true);
         this.transactionsLoaded.set(true);
-      },
-    });
+      });
   }
 
   load(accountSeed: AccountRecord[]): void {
@@ -187,7 +188,7 @@ export class BankService {
 
     this.changeBalance(username, amount);
     this.touch();
-    this.loadHistory();
+    await this.loadMe();
     return '';
   }
 
@@ -221,7 +222,7 @@ export class BankService {
     }
     this.changeBalance(username, -amount);
     this.touch();
-    this.loadHistory();
+    await this.loadMe();
     return '';
   }
 
@@ -251,7 +252,7 @@ export class BankService {
     }
     this.changeBalance(username, -amount);
     this.touch();
-    this.loadHistory();
+    await this.loadMe();
     return '';
   }
 
@@ -287,7 +288,10 @@ export class BankService {
       })
       .subscribe({
         next: (rows) => {
-          this.loadTransactions(rows.map((row) => this.toRecord(username, row)));
+          // Deposits and withdrawals have no destination, and the history query
+          // returns every one of those rows. Keep the rows this account sent.
+          const mine = rows.filter((row) => row.sourceUsername === username);
+          this.loadTransactions(mine.map((row) => this.toRecord(username, row)));
           this.transactionsLoaded.set(true);
           this.touch();
         },
