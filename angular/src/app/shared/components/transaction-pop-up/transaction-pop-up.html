@@ -1,0 +1,93 @@
+<div class="flex items-center gap-(--space-s) px-6 pt-6 pb-2 bg-[#F8F8F8]">
+  <span
+    class="flex size-11 shrink-0 items-center justify-center rounded-full border font-bold text-(length:--step-4) {{
+      style
+    }}"
+    aria-hidden="true"
+    >$</span
+  >
+  <div class="min-w-0 flex items-center pb-4">
+    <h1 mat-dialog-title class="m-0! p-0! font-bold! text-gray-900 text-(length:--step-10)!">
+      {{ title }}
+    </h1>
+  </div>
+</div>
+
+<mat-dialog-content class="bg-[#F8F8F8]">
+  <div class="flex flex-col gap-(--space-m)">
+    @if (data.transactionType == 'TRANSFER_IN' || data.transactionType == 'TRANSFER_OUT') {
+      <div class="grid grid-cols-1 items-center gap-(--space-s) sm:grid-cols-[1fr_auto_1fr]">
+        <app-card class="flex flex-col gap-(--space-3xs) min-w-0 shadow-none {{ redStyle }}">
+          <span class="text-gray-700 text-(length:--step-0)">From {{ data.accountId }}</span>
+          <span class="max-w-full whitespace-nowrap font-bold text-black text-(length:--step-6)">
+            {{ usdFormatter.format(data.amount) }}
+          </span>
+        </app-card>
+        <ng-icon
+          name="matArrowForwardFillOutline"
+          size="32"
+          class="justify-self-center rotate-90 text-(--primary) sm:rotate-0"
+        />
+        <app-card class="flex flex-col gap-(--space-3xs) min-w-0 shadow-none {{ greenStyle }}">
+          <span class="text-gray-700 text-(length:--step-0)">To {{ data.recipientAccountId }}</span>
+          <span class="max-w-full whitespace-nowrap font-bold text-black text-(length:--step-6)">
+            {{ usdFormatter.format(data.amount) }}
+          </span>
+        </app-card>
+      </div>
+    } @else {
+      <app-card class="flex flex-col items-center shadow-none {{ style }}">
+        <span class="text-gray-700 text-(length:--step-0) pb-2">Amount</span>
+        <span class="max-w-full font-bold text-black text-(length:--step-10)">
+          {{ usdFormatter.format(data.amount) }}
+        </span>
+      </app-card>
+    }
+
+    <div class="grid grid-cols-1 gap-(--space-s) sm:grid-cols-2">
+      <app-card class="flex flex-col gap-(--space-3xs) shadow-none">
+        <div
+          class="font-semibold tracking-wide uppercase text-(--primary-dark-30) text-(length:--step--1)"
+        >
+          Transaction type
+        </div>
+        <div class="font-semibold text-black text-(length:--step-2)">{{ title }}</div>
+      </app-card>
+      <app-card class="flex flex-col gap-(--space-3xs) shadow-none">
+        <div
+          class="font-semibold tracking-wide uppercase text-(--primary-dark-30) text-(length:--step--1)"
+        >
+          {{ data.transactionType === 'TRANSFER_IN' ? 'From' : 'Destination' }}
+        </div>
+        <div class="font-semibold break-all text-black text-(length:--step-2)">
+          {{ data.recipientAccountId ?? data.accountId }}
+        </div>
+      </app-card>
+      <app-card class="flex flex-col gap-(--space-3xs) shadow-none sm:col-span-2">
+        <div
+          class="font-semibold tracking-wide uppercase text-(--primary-dark-30) text-(length:--step--1)"
+        >
+          Date
+        </div>
+        <div class="font-semibold text-black text-(length:--step-2)">{{ date }}</div>
+      </app-card>
+      <app-card class="flex flex-col gap-(--space-3xs) shadow-none sm:col-span-2">
+        <div
+          class="font-semibold tracking-wide uppercase text-(--primary-dark-30) text-(length:--step--1)"
+        >
+          Notes
+        </div>
+        <dd class="break-words text-black text-(length:--step-1)">{{ data.description || '—' }}</dd>
+      </app-card>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="flex px-6! pb-6! mb-4 sm:justify-end bg-[#F8F8F8]">
+  <button
+    mat-dialog-close
+    class="cursor-pointer rounded-xl border-2 border-(--primary-white-70) px-[1em] py-[0.75em] font-semibold! text-(--primary-dark-20) text-(length:--step-1)! transition hover:bg-(--primary-white-90) w-full sm:min-w-40"
+  >
+    Close
+  </button>
+</mat-dialog-actions>

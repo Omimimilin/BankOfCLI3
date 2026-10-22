@@ -61,7 +61,7 @@
       <tr id="transaction-table-header">
         <th>Date/Time</th>
         <th>Category</th>
-        <th>Destination</th>
+        <th>Related Account</th>
         <th>Status</th>
         <th>Amount</th>
       </tr>
@@ -74,7 +74,13 @@
         }
       } @else {
         @for (transaction of tableData(); track transaction.id) {
-          <tr>
+          <tr
+            class="clickable-row"
+            role="button"
+            tabindex="0"
+            (click)="showDetails(transaction.record)"
+            (keydown.enter)="showDetails(transaction.record)"
+          >
             <td data-label="Date/Time">{{ transaction.date }}</td>
             <td data-label="Category">{{ transaction.category }}</td>
             <td data-label="Destination">{{ transaction.destination }}</td>
