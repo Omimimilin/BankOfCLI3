@@ -21,6 +21,7 @@ export class Input {
   name = input('');
   value = model('');
   disabled = input(false);
+  maxlength = input<number | undefined>(undefined);
 
   protected showPassword = signal(false);
 

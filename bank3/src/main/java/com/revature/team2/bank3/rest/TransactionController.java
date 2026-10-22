@@ -21,6 +21,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @RestController
 @RequestMapping("/api/transactions")
@@ -37,31 +38,34 @@ public class TransactionController {
     // records for transactions
     public record TransactionRequest(
             @NotBlank String username,
-            @NotNull @DecimalMin("0.01") BigDecimal amount) {
+            @NotNull @DecimalMin("0.01") BigDecimal amount,
+            @Size(max = 255) String description) {
     }
 
     public record TransferRequest(
             @NotBlank String username,
             @NotBlank String destinationUsername,
-            @NotNull @DecimalMin("0.01") BigDecimal amount) {
+            @NotNull @DecimalMin("0.01") BigDecimal amount,
+            @Size(max = 255) String description) {
     }
 
     // Deposit
     @PostMapping("/deposit")
     public ResponseEntity<TransactionResponseDto> deposit(@Valid @RequestBody TransactionRequest req) {
-        return created(transactionService.deposit(req.username(), req.amount()));
+        return created(transactionService.deposit(req.username(), req.amount(), req.description()));
     }
 
     // Withdraw
     @PostMapping("/withdraw")
     public ResponseEntity<TransactionResponseDto> withdraw(@Valid @RequestBody TransactionRequest req) {
-        return created(transactionService.withdraw(req.username(), req.amount()));
+        return created(transactionService.withdraw(req.username(), req.amount(), req.description()));
     }
 
     // Transfer
     @PostMapping("/transfer")
     public ResponseEntity<TransactionResponseDto> transfer(@Valid @RequestBody TransferRequest req) {
-        return created(transactionService.transfer(req.username(), req.destinationUsername(), req.amount()));
+        return created(transactionService.transfer(req.username(), req.destinationUsername(), req.amount(),
+                req.description()));
     }
 
     private ResponseEntity<TransactionResponseDto> created(Transaction saved) {
