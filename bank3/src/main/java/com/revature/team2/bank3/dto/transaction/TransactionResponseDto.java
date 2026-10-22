@@ -14,7 +14,8 @@ public record TransactionResponseDto(
         @Schema(description = "The type of the transaction", example = "deposit") String transferType,
         @Schema(description = "The time the transaction occurred") Instant timestamp,
         @Schema(description = "The username of the source account") String sourceUsername,
-        @Schema(description = "The username of the destination account, null for deposits and withdrawals") String destinationUsername) {
+        @Schema(description = "The username of the destination account, null for deposits and withdrawals") String destinationUsername,
+        @Schema(description = "A description of the transaction being done") String description) {
 
     public static TransactionResponseDto from(Transaction tx) {
         return new TransactionResponseDto(
@@ -23,6 +24,7 @@ public record TransactionResponseDto(
                 tx.getTransferType(),
                 tx.getTimestamp(),
                 tx.getSourceAccount().getUsername(),
-                tx.getDestinationAccount() == null ? null : tx.getDestinationAccount().getUsername());
+                tx.getDestinationAccount() == null ? null : tx.getDestinationAccount().getUsername(),
+                tx.getDescription());
     }
 }

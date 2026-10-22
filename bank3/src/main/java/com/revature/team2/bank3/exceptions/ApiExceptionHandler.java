@@ -4,6 +4,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -19,6 +20,15 @@ public class ApiExceptionHandler {
                 .map(violation -> String.format("%s: %s",
                         violation.getPropertyPath(),
                         violation.getMessage()))
+                .collect(Collectors.joining(", "));
+        return ResponseContract.error(HttpStatus.BAD_REQUEST, message);
+    }
+
+    // Throws if note is over 255 chars
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ResponseContract<Void>> handleException(MethodArgumentNotValidException e) {
+        String message = e.getBindingResult().getFieldErrors().stream()
+                .map(error -> String.format("%s: %s", error.getField(), error.getDefaultMessage()))
                 .collect(Collectors.joining(", "));
         return ResponseContract.error(HttpStatus.BAD_REQUEST, message);
     }

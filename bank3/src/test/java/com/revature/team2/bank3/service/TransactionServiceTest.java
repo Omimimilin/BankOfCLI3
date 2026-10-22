@@ -37,7 +37,7 @@ class TransactionServiceTest {
         when(userService.getUserByUsername("alice")).thenReturn(user); // stub: "when asked for
         System.out.print(user.getBalance());
         assertThrows(InsufficientFundsException.class, // act + assert: the lambda
-                () -> service.withdraw("alice", new BigDecimal("75")));
+                () -> service.withdraw("alice", new BigDecimal("75"), null));
 
         assertEquals(new BigDecimal("50"), user.getBalance()); // balance untouched
         verify(transactionRepo, never()).save(any(Transaction.class)); // nothing was

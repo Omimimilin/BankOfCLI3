@@ -1,18 +1,21 @@
 ﻿import { CdkMenu, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
 import { ConnectedPosition } from '@angular/cdk/overlay';
 import { Component, effect, inject, input, signal } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   matChevronLeftFillOutline,
   matChevronRightFillOutline,
 } from '@ng-icons/material-symbols/outline';
+import { Transaction as TransactionRecord } from '../../../models/Transaction.model';
 import { TransactionType } from '../../../models/TransactionType.model';
 import { BankService } from '../../../service/bank';
 import { TransactionFlow } from '../../../service/transaction-flow';
 import { Button } from '../../../shared/components/button/button';
 import { Dropdown } from '../../../shared/components/dropdown/dropdown';
 import { Input } from '../../../shared/components/input/input';
+import { TransactionPopUp } from '../../../shared/components/transaction-pop-up/transaction-pop-up';
 import { Label } from '../../../shared/components/label/label';
 import { LoadingRow } from '../../../shared/components/loading-row/loading-row';
 
@@ -24,6 +27,7 @@ interface Transaction {
   status: string;
   amount: number;
   note: string;
+  record: TransactionRecord;
 }
 
 @Component({
@@ -46,6 +50,7 @@ interface Transaction {
 })
 export class TransactionTable {
   private readonly bank = inject(BankService);
+  private readonly dialog = inject(MatDialog);
   private readonly flow = inject(TransactionFlow);
   protected readonly types = TransactionType;
 
@@ -121,6 +126,7 @@ export class TransactionTable {
         status,
         amount: transaction.amount,
         note: transaction.description?.trim() ?? '',
+        record: transaction,
       };
     });
   }
@@ -191,6 +197,10 @@ export class TransactionTable {
     this.currentPage = 1;
 
     this.updateTable();
+  }
+
+  protected showDetails(record: TransactionRecord) {
+    this.dialog.open(TransactionPopUp, { width: 'auto', height: 'auto', data: record });
   }
 
   protected processTransaction(type: TransactionType) {

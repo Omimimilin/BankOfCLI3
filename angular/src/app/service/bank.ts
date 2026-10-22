@@ -27,6 +27,7 @@ interface ApiTransaction {
   timestamp: string;
   sourceUsername: string;
   destinationUsername: string | null;
+  description?: string | null;
 }
 
 interface AccountRecord {
@@ -166,7 +167,7 @@ export class BankService {
     return '';
   }
 
-  async deposit(amount: number, _description: string): Promise<string> {
+  async deposit(amount: number, description: string): Promise<string> {
     const username = this.currentAccountId();
     if (!username) return 'You are not signed in.';
     const error = this.checkAmount(amount);
@@ -179,6 +180,7 @@ export class BankService {
         this.http.post(`${this.apiUrl}/api/transactions/deposit`, {
           username,
           amount,
+          description: description.trim() || null
         }, {
           headers: token ? { Authorization: `Bearer ${token}`} : {},
           }),
@@ -202,7 +204,7 @@ export class BankService {
     return fallback;
   }
 
-  async withdraw(amount: number, _description: string): Promise<string> {
+  async withdraw(amount: number, description: string): Promise<string> {
     const username= this.currentAccountId();
     if (!username) return 'You are not signed in.';
     const error = this.checkAmount(amount);
@@ -214,6 +216,7 @@ export class BankService {
         this.http.post(`${this.apiUrl}/api/transactions/withdraw`, {
           username,
           amount,
+          description: description.trim() || null
         }, {
           headers: token ? { Authorization: `Bearer ${token}`} : {},
         })
@@ -227,7 +230,7 @@ export class BankService {
     return '';
   }
 
-  async transfer(amount: number, recipientAccountId: string, _description: string): Promise<string> {
+  async transfer(amount: number, recipientAccountId: string, description: string): Promise<string> {
     const username = this.currentAccountId();
     if (!username) return 'You are not signed in.';
     const error = this.checkAmount(amount);
@@ -244,6 +247,7 @@ export class BankService {
           username,
           destinationUsername,
           amount,
+          description: description.trim() || null
         }, {
           headers: token ? { Authorization: `Bearer ${token}`} : {},
         })
@@ -315,7 +319,7 @@ export class BankService {
       accountId: username,
       recipientAccountId: other,
       amount: Number(row.amount),
-      description: null,
+      description: row.description ?? null,
       transactionType: this.toType(row.transferType),
       dateCreated: new Date(row.timestamp).toISOString(),
       transferId: null,

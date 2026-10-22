@@ -29,7 +29,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public Transaction deposit(String username, BigDecimal amount) {
+    public Transaction deposit(String username, BigDecimal amount, String description) {
         User user = userService.getUserByUsername(username);
         increaseBalance(user, amount);
         Transaction tx = new Transaction(
@@ -37,7 +37,8 @@ public class TransactionService {
                 "deposit",
                 Instant.now(),
                 user,
-                null);
+                null,
+                description);
         Transaction saved = transactionRepo.save(tx);
         log.info("Deposit transaction saved for username: {}", username);
         return saved;
@@ -56,7 +57,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public Transaction withdraw(String username, BigDecimal amount) {
+    public Transaction withdraw(String username, BigDecimal amount, String description) {
 
         User user = userService.getUserByUsername(username);
         decreaseBalance(user, amount);
@@ -65,7 +66,8 @@ public class TransactionService {
                 "withdraw",
                 Instant.now(),
                 user,
-                null);
+                null,
+                description);
         Transaction saved = transactionRepo.save(tx);
         log.info("Withdraw transaction saved for username: {}", username);
         return saved;
@@ -87,7 +89,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public Transaction transfer(String fromUsername, String toUsername, BigDecimal amount) {
+    public Transaction transfer(String fromUsername, String toUsername, BigDecimal amount, String description) {
         if (fromUsername.equals(toUsername)) {
             throw new SelfTransferNotAllowedException("Transferring to the same account is an invalid operation");
         }
@@ -100,13 +102,15 @@ public class TransactionService {
                 "transfer_out",
                 Instant.now(),
                 fromUser,
-                toUser);
+                toUser,
+                description);
         Transaction toTX = new Transaction(
                 amount,
                 "transfer_in",
                 Instant.now(),
                 toUser,
-                fromUser);
+                fromUser,
+                description);
 
         Transaction saved = transactionRepo.save(fromTX);
         transactionRepo.save(toTX);

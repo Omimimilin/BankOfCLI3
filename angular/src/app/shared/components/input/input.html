@@ -6,6 +6,7 @@
     [value]="value()"
     [placeholder]="placeholder() || ''"
     [disabled]="disabled()"
+    [attr.maxlength]="maxlength()"
     (input)="onInput($event)"
     [class]="classes()"
     required

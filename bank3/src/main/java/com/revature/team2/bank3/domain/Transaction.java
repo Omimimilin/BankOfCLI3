@@ -51,16 +51,22 @@ public class Transaction {
     @Schema(hidden = true)
     private User destinationAccount;
 
+    @Size(max = 255)
+    @Column(name = "description", nullable = true)
+    @Schema(description = "A description of the transaction", examples = {"Groceries", "Rent expenses"}, maxLength = 255)
+    private String description;
+
     public Transaction() {
     }
 
     public Transaction(BigDecimal amount, String transferType, Instant timestamp, User sourceAccountId,
-            User destinationAccountId) {
+            User destinationAccountId, String description) {
         this.amount = amount;
         this.transfer_type = transferType;
         this.timestamp = timestamp;
         this.sourceAccount = sourceAccountId;
         this.destinationAccount = destinationAccountId;
+        this.description = description;
     }
 
     public Integer getId() {
@@ -77,6 +83,14 @@ public class Transaction {
 
     public String getTransferType() {
         return transfer_type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public void setTransferType(String transfer_type) {
@@ -110,6 +124,7 @@ public class Transaction {
     @Override
     public String toString() {
         return "Transaction [id=" + id + ", amount=" + amount + ", transfer_type=" + transfer_type + ", timestamp="
-                + timestamp + ", sourceAccount=" + sourceAccount + ", destinationAccount=" + destinationAccount + "]";
+                + timestamp + ", sourceAccount=" + sourceAccount + ", destinationAccount=" + destinationAccount
+                + ", description=" + description + "]";
     }
 }
