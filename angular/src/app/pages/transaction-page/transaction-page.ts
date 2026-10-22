@@ -42,20 +42,20 @@ export class TransactionPage {
 
   protected readonly isTransfer = computed(() => this.kind() === 'transfer');
 
-  protected submit(): void {
+  protected async submit(): Promise<void> {
     const amount = Number(this.amount());
     const note = this.description();
     let error = '';
 
     switch (this.kind()) {
       case 'deposit':
-        error = this.bank.deposit(amount, note);
+        error = await this.bank.deposit(amount, note);
         break;
       case 'withdraw':
-        error = this.bank.withdraw(amount, note);
+        error = await this.bank.withdraw(amount, note);
         break;
       case 'transfer':
-        error = this.bank.transfer(amount, this.recipientAccountId(), note);
+        error = await this.bank.transfer(amount, this.recipientAccountId(), note);
         break;
       default:
         error = 'Unknown transaction.';

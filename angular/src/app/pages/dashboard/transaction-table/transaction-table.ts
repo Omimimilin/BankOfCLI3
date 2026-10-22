@@ -117,7 +117,7 @@ export class TransactionTable {
           minute: '2-digit',
         }),
         category,
-        destination: other?.accountName ?? '-',
+        destination: other?.accountName ?? transaction.recipientAccountId ?? '-',
         status,
         amount: transaction.amount,
         note: transaction.description?.trim() ?? '',
