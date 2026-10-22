@@ -90,6 +90,10 @@ select {
   --base: #853ddf;
   --primary: oklch(from var(--base) l c calc(h + var(--hue-rotate)));
 
+  --primary-fade-top: oklch(from var(--primary) l c h / 0.5);
+  --primary-fade-bottom: oklch(from var(--primary) l c h / 0);
+  --primary-fallback: oklch(from var(--primary) l c h / 0.25);
+
   --primary-dark-10: color-mix(in oklch, var(--primary), black 10%);
   --primary-dark-20: color-mix(in oklch, var(--primary), black 20%);
   --primary-dark-30: color-mix(in oklch, var(--primary), black 30%);

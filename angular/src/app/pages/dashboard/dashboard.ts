@@ -1,4 +1,4 @@
-﻿import { CdkMenu, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
+import { CdkMenu, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
 import { ConnectedPosition } from '@angular/cdk/overlay';
 import { DatePipe } from '@angular/common';
 import {
@@ -151,29 +151,43 @@ export class Dashboard implements AfterViewInit {
     const yAxis = this.getYAxisRange(history.values);
     Chart.getChart('balanceChart')?.destroy();
 
+    const rootStyles = getComputedStyle(document.documentElement);
+    const primaryColor = rootStyles.getPropertyValue('--primary').trim();
+    const fadeTop = rootStyles.getPropertyValue('--primary-fade-top').trim();
+    const fadeBottom = rootStyles.getPropertyValue('--primary-fade-bottom').trim();
+    const fallbackAlpha = rootStyles.getPropertyValue('--primary-fallback').trim();
+
+    const lineColor = '#232323';
+    const pointBorderColor = '#ffffff';
+
+    const canvas = document.getElementById('balanceChart') as HTMLCanvasElement;
+    const ctx = canvas?.getContext('2d');
+
+    let backgroundGradient: string | CanvasGradient = fallbackAlpha;
+    if (ctx) {
+      const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+      gradient.addColorStop(0, fadeTop);
+      gradient.addColorStop(1, fadeBottom);
+      backgroundGradient = gradient;
+    }
+
     this.chart = new Chart('balanceChart', {
       type: 'line',
-
       data: {
         labels: history.labels,
-
         datasets: [
           {
             label: 'Balance',
             data: history.values,
-            borderColor: '#232323',
+            borderColor: lineColor,
             borderWidth: 1,
-            tension: 0,
-            fill: false,
-
+            tension: 0.4,
+            fill: true,
+            backgroundColor: backgroundGradient,
             pointRadius: 7,
-
-            // Creates the visual gap around the dot
             pointBorderWidth: 4,
-            pointBorderColor: 'white',
-
-            // Actual dot
-            pointBackgroundColor: '#C3A9E9',
+            pointBorderColor,
+            pointBackgroundColor: primaryColor,
             pointHoverRadius: 7,
           },
         ],
