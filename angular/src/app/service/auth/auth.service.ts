@@ -15,7 +15,8 @@ import { UserResponseDto } from '../../models/dto/user/UserDtos';
 })
 export abstract class ApiService {
   public readonly http = inject(HttpClient);
-  public readonly API_BASE = 'http://localhost:8080/api';
+  // relative so it works on cloudfront, ng serve proxies it locally (proxy.conf.json)
+  public readonly API_BASE = '/api';
 
   public async handleRequest<T>(
     request$: Observable<ApiResponse<T>>,

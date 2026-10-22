@@ -51,7 +51,8 @@ interface TransactionRecord {
 
 @Injectable({ providedIn: 'root' })
 export class BankService {
-  private readonly apiUrl = 'http://localhost:8080';
+  // empty so calls go to /api on the same site (see proxy.conf.json)
+  private readonly apiUrl = '';
   private readonly accountIdKey = 'currentAccountId';
   private readonly accountsKey = 'bankAccounts';
   private readonly transactionsKey = 'bankTransactions';
